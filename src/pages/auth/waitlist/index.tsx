@@ -16,13 +16,10 @@ export default function Waitlist() {
   const callbackURL = URLSearchParams.get("callbackURL") || ""
 
   return (
-    <div className="min-h-[400px] flex justify-between">
-
-      <div className="bg-[url('/bg.png')] bg-cover bg-center md:w-[45%] h-screen sticky top-0 md:block hidden"></div>
 
       <div className="flex md:w-[55%] h-screen w-full items-center justify-center">
         <div className="sm:w-[400px] md:mx-0 mx-auto w-full p-6">
-          <div className="flex flex-col justify-center gap-6 md:p-[5%] md:py-[5%] py-[80px]">
+          <div className="flex flex-col justify-center gap-6 md:p-[5%]">
             <div className="flex flex-col gap-2">
               <BlurReveal preset="slide-right">
                 <div className="flex gap-2 items-center">
@@ -95,14 +92,11 @@ export default function Waitlist() {
               <BlurReveal preset="slide-right">
                 <p>Join over 10+ users</p>
               </BlurReveal>
-              <BlurReveal preset="zoom">
-                <img src="/users.png" alt="users" width={220} height={36} className="" />
-              </BlurReveal>
+              <img src="/users.png" alt="users" width={220} height={36} className="" />
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

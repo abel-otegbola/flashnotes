@@ -1,9 +1,9 @@
 'use client'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import toast, { Toaster } from "react-hot-toast";
-import { ID } from "appwrite";
+import { ID, Query } from "appwrite";
 import { useNavigate } from "react-router-dom";
-import { account } from "../appwrite/appwrite";
+import { account, tablesDB } from "../appwrite/appwrite";
 import { useLocalStorage } from '../customHooks/useLocaStorage';
 import { User } from '../interface/auth';
 
@@ -62,10 +62,49 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
     
     async function joinWaitlist(name: string, email: string, password: string, callbackURL: string) {
         setLoading(true)
-        await account.create(ID.unique(), email, password, name)
+        
+        const promise = tablesDB.listRows({
+            databaseId: "68ed2831002414dd5275",
+            tableId: "waitlist",
+        });
+
+        promise.then(async function (response) { // 1️⃣ Check if username already exists
+            if(response.rows.map(r => r.name.toLowerCase()).includes(name.toLowerCase())) {
+                setPopup({ type: "error", msg: "Username already exists" })
+                setLoading(false)
+            }
+            else {                
+                await account.create(ID.unique(), email, password, name)
+                .then(() => {
+                    setPopup({ type: "success", msg: "Registered successful" })
+                    tablesDB.createRow({
+                        databaseId: '68ed2831002414dd5275',
+                        tableId: 'waitlist',
+                        rowId: ID.unique(),
+                        data: { email, password, name }
+                    });
+                    router("/auth/waitlist/success")
+                })
+                .catch(error => {
+                    setLoading(true)
+                    setPopup({ type: "error", msg: error.message })
+                })
+                .finally (() => {
+                    setLoading(false)
+                })
+            }
+        }, function (error) {
+            console.log(error);
+            setLoading(false)
+        });
+    }
+
+    async function getUsernames() {
+        setLoading(true)
+        await account.get()
         .then(() => {
             setPopup({ type: "success", msg: "Registered successful" })
-            router("/waitlist/success")
+            router("/auth/waitlist/success")
         })
         .catch(error => {
             setLoading(true)
