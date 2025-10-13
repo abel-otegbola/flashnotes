@@ -15,9 +15,9 @@ export default function Login() {
   return (
     <div className="min-h-[400px] flex justify-between">
 
-      <div className="bg-gray-100 md:w-[50%] h-screen md:block hidden"></div>
+      <div className="bg-gray-100 md:w-[40%] h-screen md:block hidden"></div>
 
-      <div className="flex md:w-[50%] h-auto w-full items-center justify-center">
+      <div className="flex md:w-[60%] h-auto w-full items-center justify-center">
         <div className="sm:w-[445px] md:mx-0 mx-auto w-full p-6">
           <div className="flex flex-col justify-center gap-6 md:p-[5%] md:py-[5%] py-[80px]">
             <div>

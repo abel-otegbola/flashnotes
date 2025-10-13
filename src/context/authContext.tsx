@@ -13,7 +13,8 @@ type values = {
     loading: boolean;
     setPopup: (aug0: values["popup"]) => void;
     signIn: (email: string, password: string, callbackURL: string) => void; 
-    signUp: (email: string, password: string, callbackURL: string) => void;
+    signUp: ( name: string, email: string, password: string, callbackURL: string) => void;
+    joinWaitlist: ( name: string, email: string, password: string, callbackURL: string) => void;
     logOut: () => void;
 }
 
@@ -28,10 +29,6 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
     const [popup, setPopup] = useState({ type: "", msg: "" });
     const [loading, setLoading] = useState(false);
     const router = useNavigate();
-
-    const formatError = (msg: string) => {
-        return msg.replace("Firebase: Error (auth/", "").replace("-", " ").replace(")", "")
-    }
 
     async function signIn(email: string, password: string, callbackURL: string) {
         setLoading(true)
@@ -49,12 +46,26 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
         })
     }
 
-    async function signUp(email: string, password: string, callbackURL: string) {
+    async function signUp(name: string, email: string, password: string, callbackURL: string) {
         setLoading(true)
-        await account.create(ID.unique(), email, password)
+        await account.create(ID.unique(), email, password, name)
         .then(() => {
             setPopup({ type: "success", msg: "Registered successful" })
             signIn(email, password, callbackURL);
+        })
+        .catch(error => {
+            setLoading(true)
+            setPopup({ type: "error", msg: error.message })
+            setLoading(false)
+        })
+    }
+    
+    async function joinWaitlist(name: string, email: string, password: string, callbackURL: string) {
+        setLoading(true)
+        await account.create(ID.unique(), email, password, name)
+        .then(() => {
+            setPopup({ type: "success", msg: "Registered successful" })
+            router("/waitlist/success")
         })
         .catch(error => {
             setLoading(true)
@@ -92,7 +103,7 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
     }, [popup])
 
     return (
-        <AuthContext.Provider value={{ user, popup, loading, setPopup, signIn, signUp, logOut }}>
+        <AuthContext.Provider value={{ user, popup, loading, setPopup, signIn, signUp, joinWaitlist, logOut }}>
             <Toaster containerClassName="p-8" />
             {children}
         </AuthContext.Provider>
