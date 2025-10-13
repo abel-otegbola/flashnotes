@@ -50,7 +50,7 @@ export default function Input({ className, disabled, label, name, value, type, o
                     <span tabIndex={1} className="p-2 cursor-pointer" title="toggle show password" aria-checked={show} onClick={() => setShow(!show)}>{ show ? <Eye /> : <EyeClosed /> }</span>
                 : "" }
             </div>
-                { error && !focus ? <p className="p1-1 text-[10px] bg-white text-red-500 backdrop-blur-sm">{error}</p> : "" }
+                { error && !focus ? <p className="duration-300 p1-1 text-[10px] bg-white text-red-500 backdrop-blur-sm">{error}</p> : "" }
         </div>
     )
 }

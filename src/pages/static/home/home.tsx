@@ -13,22 +13,22 @@ function Home() {
         </p>
 
         <div>
-          <BlurReveal duration={3}>
-            <h1 className="md:text-[48px] text-[28px] font-bold w-fit text-center mx-auto leading-[120%]">
+          <BlurReveal preset="slide-left">
+            <h1 className="md:text-[48px] text-[24px] font-bold w-fit text-center mx-auto leading-[120%]">
               Convert Notes into Smart
             </h1>
           </BlurReveal>
-          <BlurReveal duration={3}>
-            <h1 className="flex flex-wrap md:text-[48px] text-[28px] font-bold w-fit text-center gap-4 items-center mx-auto leading-[120%]">
-              Flashcards <HeroCheckIcon />  Instantly
+          <BlurReveal preset="slide-left">
+            <h1 className="flex flex-wrap md:text-[48px] text-[24px] font-bold w-fit text-center gap-2 items-center mx-auto leading-[120%]">
+              Flashcards <HeroCheckIcon width={60} className="w-[20px]" />  Instantly
             </h1>
           </BlurReveal>
         </div>
 
-        <BlurReveal duration={3}>
+        <BlurReveal preset="slide-left">
           <p className="text-gray text-center mx-auto md:w-[75%] w-full">Paste your lecture notes, pdfs, or meeting transcripts and get smart flashcards in seconds.</p>
         </BlurReveal>
-        <Button>Join waitlist</Button>
+        <Button href="/auth/waitlist">Join waitlist</Button>
 
         <img src="/hero-img.png" width={729} height={529} alt="hero" className="" />
         
