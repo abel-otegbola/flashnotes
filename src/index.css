@@ -6,6 +6,7 @@
   --color-text-black: oklch(23.51% 0.029 313.23);
   --color-bg-gray-100: oklch(98.81% 0.000 0);
   --color-border-gray-100: oklch(67.60% 0.032 310.00);
+  --color-dark: oklch(22.64% 0.000 0);
 }
 html {
   font-family: "Inter", sans-serif;
