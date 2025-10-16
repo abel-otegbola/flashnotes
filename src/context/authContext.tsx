@@ -1,7 +1,7 @@
 'use client'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import toast, { Toaster } from "react-hot-toast";
-import { ID, Query } from "appwrite";
+import { ID } from "appwrite";
 import { useNavigate } from "react-router-dom";
 import { account, tablesDB } from "../appwrite/appwrite";
 import { useLocalStorage } from '../customHooks/useLocaStorage';

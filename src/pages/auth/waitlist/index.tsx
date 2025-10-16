@@ -32,7 +32,7 @@ export default function Waitlist() {
                 <h1 className="font-bold md:text-[20px] text-[16px] text-dark-500">Get early access</h1>
               </BlurReveal>
               <BlurReveal preset="slide-left">
-                <p className="text-gray">Be one of the first to create a profile and claim a premium name </p>
+                <p className="text-gray">Help shape flashtasks, and enjoy free premium perks at launch. </p>
               </BlurReveal>
             </div>
             <Formik

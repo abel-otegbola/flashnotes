@@ -11,14 +11,14 @@ function Topbar() {
         <div className="flex justify-between items-center w-full md:px-9 p-4 z-[3] overflow-hidden">
             <div className="sm:w-[10%] text-start flex gap-2 items-center">
                 <LogoIcon />
-                <h3 className="text-[16px] font-bold bg-gradient-to-r bg-clip-text text-transparent from-primary to-fuchsia-400">Flashnotes</h3>
+                <h3 className="text-[16px] font-bold bg-gradient-to-r bg-clip-text text-transparent from-primary to-fuchsia-400">flashtasks</h3>
             </div>
             
             <ul className={`
                 flex sm:flex-row flex-col md:gap-4 md:px-0 md:py-0 py-12 px-6 md:sticky fixed top-0 right-0 z-20 md:bg-none bg-white sm:w-auto h-full w-[75%] 
                 ${open ? "translate-x-[0px]" : "sm:translate-x-[0] translate-x-[120%]"} duration-500
             `}>
-                {
+                {/* {
                     [
                         { id: 0, title: "home", href: "/" },
                         { id: 1, title: "about us", href: "/about" },
@@ -34,9 +34,9 @@ function Topbar() {
                             </Link>
                         </li>
                     ))
-                }
+                } */}
                 <div className="flex flex-col gap-4 sm:hidden p-6 mt-16">
-                    Have ideas to make flashnote better?
+                    Have ideas to make flashtasks better?
                     <Link to="/contact" className="text-primary">Message us</Link>
                 </div>
             </ul>
