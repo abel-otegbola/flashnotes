@@ -20,7 +20,7 @@ function Home() {
           </BlurReveal>
           <BlurReveal preset="slide-left">
             <h1 className="flex flex-wrap md:text-[48px] text-[24px] font-bold w-fit text-center gap-2 items-center mx-auto leading-[120%]">
-              Flow <HeroCheckIcon width={60} className="w-[20px]" /> in a ⚡Flash 
+              Tasks <HeroCheckIcon width={60} className="w-[20px]" /> in a ⚡Flash 
             </h1>
           </BlurReveal>
         </div>
