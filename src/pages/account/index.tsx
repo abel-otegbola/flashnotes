@@ -6,6 +6,7 @@ import { AddCircle, Bell, Magnifer } from "@solar-icons/react";
 import { Formik } from "formik";
 import Button from "../../components/button/button";
 import LogoIcon from "../../assets/icons/logo";
+import Tasks from "./tasks/page";
 
 function AccountPages() {
   return (
@@ -43,6 +44,7 @@ function AccountPages() {
             <Routes>
                 <Route path="/" element={<Navigate to={"/account/dashboard"} />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tasks" element={<Tasks />} />
             </Routes>
         </div>
     </div>

@@ -3,7 +3,7 @@ import { useState, type ReactElement } from "react";
 import { Link, useLocation } from "react-router-dom";
 import LogoIcon from "../../assets/icons/logo";
 import { useOutsideClick } from "../../customHooks/useOutsideClick";
-import { Calendar, Home, IconProps, Server, UsersGroupTwoRounded } from "@solar-icons/react";
+import { Bell, Calendar, Home, IconProps, Logout, Server, Settings, UsersGroupTwoRounded } from "@solar-icons/react";
 
 export interface Link {
     id: number; label: string; icon: ReactElement<IconProps>, link: string, subtext?: string
@@ -19,6 +19,12 @@ function Sidebar() {
         { id: 2, label: "Calendar", icon: <Calendar size={20} />, link: "/account/calendar" },
         { id: 2, label: "Teams", icon: <UsersGroupTwoRounded size={20} />, link: "/account/teams" },
     ]
+    
+    const otherLinks: Link[] = [
+        { id: 0, label: "Notifications", icon: <Bell size={20} />, link: "/account/notifications" },
+        { id: 1, label: "Settings", icon: <Settings size={20} />, link: "/account/settings" },
+        { id: 2, label: "Logout", icon: <Logout size={20} />, link: "#" },
+    ]
     const modalRef = useOutsideClick(setOpen, false)
 
     return (
@@ -32,11 +38,30 @@ function Sidebar() {
                 <h1 className="flex items-center mb-10">
                     <LogoIcon className="text-primary 2xl:w-[40px] md:w-[32px] w-[24px]" />
                 </h1>
+
                 <div className="flex flex-col gap-2">
+                    <p className="text-gray-400 mb-2">GENERAL</p>
                     {
                     generalLinks.map(link => {
                             return (
-                            <Link key={link.id} onClick={() => setOpen(false)} to={ link.link} className={`relative flex items-center justify-between px-3 py-1 md:rounded-[6px] duration-300 font-medium ${pathname.includes(link.link) ? "bg-gray-100 border border-gray-200" : " hover:bg-gray-500/[0.06] border-l-3 border-transparent hover:dark:bg-gray-500/[0.09]"}`}>
+                            <Link key={link.id} onClick={() => setOpen(false)} to={ link.link} className={`relative flex items-center justify-between px-3 py-1 md:rounded-[6px] duration-300 font-medium ${pathname.includes(link.link) ? "bg-gray-100 border border-gray-200" : " hover:bg-gray-500/[0.06] hover:dark:bg-gray-500/[0.09]"}`}>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-[30px] opacity-[0.6]">{link.icon}</span>
+                                    <span className="flex-1 py-1 break-normal">{link.label} </span>
+                                </div>
+                                { link.subtext ? <span className="flex items-center justify-center bg-primary text-white text-[9px] rounded-full px-[6px]">{link.subtext}</span> : ""}
+                            </Link>
+                            )
+                    })
+                    }
+                </div>
+                
+                <div className="flex flex-col gap-2 mt-6">
+                    <p className="text-gray-400 mb-2">OTHERS</p>
+                    {
+                    otherLinks.map(link => {
+                            return (
+                            <Link key={link.id} onClick={() => setOpen(false)} to={ link.link} className={`relative flex items-center justify-between px-3 py-1 md:rounded-[6px] duration-300 font-medium ${pathname.includes(link.link) ? "bg-gray-100 border border-gray-200" : " hover:bg-gray-500/[0.06] hover:dark:bg-gray-500/[0.09]"}`}>
                                 <div className="flex items-center gap-2">
                                     <span className="w-[30px] opacity-[0.6]">{link.icon}</span>
                                     <span className="flex-1 py-1 break-normal">{link.label} </span>

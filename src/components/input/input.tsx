@@ -22,16 +22,17 @@ export default function Input({ className, disabled, label, name, value, type, o
 
     return (
         <div>
-            { label ? <label htmlFor={name} className={`text-[12px] font-medium duration-300 ${focus ? "text-primary" : ""}`}>{label}</label> : "" }
+            { label ? <label htmlFor={name} className={`text-[12px] font-medium duration-300 mb-1 ${focus ? "text-primary" : ""}`}>{label}</label> : "" }
 
             <div className={`flex items-center gap-1 relative bg-white dark:bg-transparent dark:text-gray w-full border rounded-[6px] duration-500 
                 ${error && !focus ? "border-red-500 text-red-500 " : "border-gray-100"}
                 ${focus ? "border-primary shadow-input-active" : ""}
                 ${className}
+                ${label ? "mt-1" : ""}
             `}>
                 <span className={`${!focus ? "opacity-[0.4]": "text-primary"} ${leftIcon ? "pl-2" : ""}`}>{ leftIcon }</span>
                 <Field
-                    className={`sm:p-2 p-[6px] w-full outline-none bg-transparent
+                    className={`p-2 w-full outline-none bg-transparent
                         ${className} 
                         ${disabled ? "opacity-[0.25]" : ""}
                     `}
