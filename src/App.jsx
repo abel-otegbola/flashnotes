@@ -7,7 +7,7 @@ import AccountPages from "./pages/account"
 function App() {
 
   return (
-    <div className="">
+    <div className="bg-white dark:bg-[#101010] dark:text-white">
       <BrowserRouter>
         <AuthProvider>
           <Routes>

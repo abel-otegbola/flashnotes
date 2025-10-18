@@ -34,7 +34,7 @@ function Sidebar() {
                 <span className={`duration-500 transition-all bg-[#111] rounded-[2px] ${open ? "py-[0px] w-[0px] h-[0px] translate-x-[-12px]" : "translate-x-[4px] py-[1px] px-[4px] w-[8px] h-[2px]"}`}></span>
                 <span className={`w-[8px] h-[2px] py-[1px] px-[10px] duration-500 transition-all bg-[#222] rounded-[2px] ${open ? "rotate-[-45deg] translate-y-[-4.5px]" : "rotate-[0deg]"}`}></span>
             </button>
-            <div className={`flex flex-col md:w-full w-[280px] md:h-full bg-white h-[100vh] md:rounded-[20px] md:sticky fixed md:top-0 top-0 py-4 px-4 right-0 overflow-y-auto overflow-x-hidden z-[5] transition-all duration-700 ${open ? "translate-x-[0px] opacity-[1]": "translate-x-[400px] md:translate-x-[0px] md:opacity-[1] opacity-[0]"}`}>  
+            <div className={`flex flex-col md:w-full w-[280px] md:h-full bg-white dark:bg-[#151515] h-[100vh] md:rounded-[20px] md:sticky fixed md:top-0 top-0 py-4 px-4 right-0 overflow-y-auto overflow-x-hidden z-[5] transition-all duration-700 ${open ? "translate-x-[0px] opacity-[1]": "translate-x-[400px] md:translate-x-[0px] md:opacity-[1] opacity-[0]"}`}>  
                 <h1 className="flex items-center mb-10">
                     <LogoIcon className="text-primary 2xl:w-[40px] md:w-[32px] w-[24px]" />
                 </h1>
@@ -44,7 +44,7 @@ function Sidebar() {
                     {
                     generalLinks.map(link => {
                             return (
-                            <Link key={link.id} onClick={() => setOpen(false)} to={ link.link} className={`relative flex items-center justify-between px-3 py-1 md:rounded-[6px] duration-300 font-medium ${pathname.includes(link.link) ? "bg-gray-100 border border-gray-200" : " hover:bg-gray-500/[0.06] hover:dark:bg-gray-500/[0.09]"}`}>
+                            <Link key={link.id} onClick={() => setOpen(false)} to={ link.link} className={`relative flex items-center justify-between px-3 py-1 md:rounded-[6px] duration-300 font-medium ${pathname.includes(link.link) ? "bg-gray-100 dark:bg-[#202020] border border-gray-200 dark:border-gray-500/[0.3]" : " hover:bg-gray-500/[0.06] hover:dark:bg-gray-500/[0.09]"}`}>
                                 <div className="flex items-center gap-2">
                                     <span className="w-[30px] opacity-[0.6]">{link.icon}</span>
                                     <span className="flex-1 py-1 break-normal">{link.label} </span>

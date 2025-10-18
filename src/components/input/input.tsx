@@ -25,8 +25,8 @@ export default function Input({ className, disabled, label, name, value, type, o
             { label ? <label htmlFor={name} className={`text-[12px] font-medium duration-300 mb-1 ${focus ? "text-primary" : ""}`}>{label}</label> : "" }
 
             <div className={`flex items-center gap-1 relative bg-white dark:bg-transparent dark:text-gray w-full border rounded-[6px] duration-500 
-                ${error && !focus ? "border-red-500 text-red-500 " : "border-gray-100"}
-                ${focus ? "border-primary shadow-input-active" : ""}
+                ${error && !focus ? "border-red-500 text-red-500 " : "border-gray-100 dark:border-gray-500/[0.3]"}
+                ${focus ? "border-primary shadow-input-active" : "border-gray-100 dark:border-gray-500/[0.3]"}
                 ${className}
                 ${label ? "mt-1" : ""}
             `}>

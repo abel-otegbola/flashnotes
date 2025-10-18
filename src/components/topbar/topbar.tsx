@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import LogoIcon from "../../assets/icons/logo";
 import Button from "../button/button";
 import { useState } from "react";
+import ThemeSelector from "../themeSelector/themeSelector";
 
 function Topbar() {
     const pathname = useLocation().pathname;
@@ -10,8 +11,8 @@ function Topbar() {
     return (
         <div className="flex justify-between items-center w-full md:px-9 p-4 z-[3] overflow-hidden">
             <div className="sm:w-[10%] text-start flex gap-2 items-center">
-                <LogoIcon />
-                <h3 className="text-[16px] font-bold bg-gradient-to-r bg-clip-text text-transparent from-primary to-fuchsia-400">flashtasks</h3>
+                <LogoIcon className="shadow-lg rounded-[10px]" />
+                <h3 className="text-[16px] font-bold bg-gradient-to-r bg-clip-text text-transparent from-primary to-fuchsia-400">Flashtasks</h3>
             </div>
             
             <ul className={`
@@ -41,12 +42,16 @@ function Topbar() {
                 </div>
             </ul>
 
-            <Button href="/auth/waitlist" className="sm:flex hidden">Join waitlist</Button> 
-            <button className="flex flex-col justify-center items-center gap-1 text-lg w-10 h-10 sm:hidden z-[50]" onClick={() => setOpen(!open)}>
-                <span className={`w-[8px] h-[2px] py-[1px] px-[10px] duration-500 transition-all bg-[#000] rounded-[2px] ${open ? "rotate-[45deg] translate-y-[4.5px]" : "rotate-[0deg]"}`}></span>
-                <span className={`duration-500 transition-all bg-[#111] rounded-[2px] ${open ? "py-[0px] w-[0px] h-[0px] translate-x-[-12px]" : "translate-x-[4px] py-[1px] px-[4px] w-[8px] h-[2px]"}`}></span>
-                <span className={`w-[8px] h-[2px] py-[1px] px-[10px] duration-500 transition-all bg-[#222] rounded-[2px] ${open ? "rotate-[-45deg] translate-y-[-4.5px]" : "rotate-[0deg]"}`}></span>
-            </button>
+            <div className="flex items-center gap-6">
+                <ThemeSelector />
+                <Button href="/auth/waitlist" className="sm:flex hidden">Join waitlist</Button> 
+                <button className="flex flex-col justify-center items-center gap-1 text-lg w-10 h-10 sm:hidden z-[50]" onClick={() => setOpen(!open)}>
+                    <span className={`w-[8px] h-[2px] py-[1px] px-[10px] duration-500 transition-all bg-[#000] rounded-[2px] ${open ? "rotate-[45deg] translate-y-[4.5px]" : "rotate-[0deg]"}`}></span>
+                    <span className={`duration-500 transition-all bg-[#111] rounded-[2px] ${open ? "py-[0px] w-[0px] h-[0px] translate-x-[-12px]" : "translate-x-[4px] py-[1px] px-[4px] w-[8px] h-[2px]"}`}></span>
+                    <span className={`w-[8px] h-[2px] py-[1px] px-[10px] duration-500 transition-all bg-[#222] rounded-[2px] ${open ? "rotate-[-45deg] translate-y-[-4.5px]" : "rotate-[0deg]"}`}></span>
+                </button>
+            </div>
+            
         </div>
     )
 }
