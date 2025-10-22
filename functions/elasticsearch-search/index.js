@@ -1,8 +1,7 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+// Appwrite uses CommonJS - no ES modules
 const { Client } = require('@elastic/elasticsearch');
 
-export default async ({ req, res, log }) => {
+module.exports = async ({ req, res, log }) => {
   try {
     const ELASTIC_URL = process.env.ELASTICSEARCH_URL;
     const ELASTIC_API_KEY = process.env.ELASTICSEARCH_API_KEY; // base64 api key
