@@ -26,7 +26,9 @@ export async function searchTasks(query: string, userEmail: string, limit: numbe
 
   try {
     const payload = JSON.stringify({ query, userEmail, limit });
-  const exec = await functions.createExecution(fnId, payload, true);
+    // IMPORTANT: run synchronously so we can read responseBody immediately
+    // Passing async=true enqueues the job and returns without a response body
+    const exec = await functions.createExecution(fnId, payload);
 
   // Appwrite Function returns a JSON string in responseBody
   const data = exec.responseBody || "";

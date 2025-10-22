@@ -53,37 +53,30 @@
             "events": [],
             "schedule": "",
             "timeout": 15,
-            "entrypoint": "index.js",
-            "commands": "npm install && npm run build",
+            "entrypoint": "src/index.js",
+            "commands": "npm install",
             "specification": "s-0.5vcpu-512mb",
             "path": "functions/elasticsearch-search"
         },
         {
             "$id": "68f948d9000a57ee569d",
             "execute": [
-                "users"
+                "any"
             ],
             "name": "elasticsearch-indexer",
             "enabled": true,
             "logging": true,
             "runtime": "node-22",
-            "scopes": [
-                "databases.read",
-                "databases.write",
-                "tables.read",
-                "collections.read",
-                "tables.write",
-                "collections.write"
-            ],
+            "scopes": [],
             "events": [
-                "databases.*.create",
-                "databases.*.update",
-                "databases.*.delete"
+                "databases.68f9033c000c2a1c40c9.collections.taskslist.documents.*.create",
+                "databases.68f9033c000c2a1c40c9.collections.taskslist.documents.*.update",
+                "databases.68f9033c000c2a1c40c9.collections.taskslist.documents.*.delete"
             ],
             "schedule": "",
             "timeout": 15,
-            "entrypoint": "index.js",
-            "commands": "npm install && npm run build",
+            "entrypoint": "src/index.js",
+            "commands": "npm install",
             "specification": "s-0.5vcpu-512mb",
             "path": "functions/elasticsearch-indexer"
         }
