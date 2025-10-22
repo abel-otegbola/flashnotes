@@ -1,48 +1,243 @@
 {
-  "projectId": "",
-  "projectName": "flashtasks",
-  "functions": [
-    {
-      "$id": "",
-      "name": "elasticsearch-search",
-      "runtime": "node-18.0",
-      "execute": ["any"],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "entrypoint": "src/index.js",
-      "commands": "npm install",
-      "path": "functions/elasticsearch-search",
-      "vars": {
-        "ELASTICSEARCH_URL": "",
-        "ELASTICSEARCH_API_KEY": "",
-        "ELASTICSEARCH_INDEX": "tasks"
-      }
+    "projectId": "68ecd4660021084fae31",
+    "endpoint": "https://fra.cloud.appwrite.io/v1",
+    "projectName": "Flashtasks",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": true,
+            "users": true,
+            "sites": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": true,
+                "invites": true,
+                "anonymous": true,
+                "email-otp": true,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": 0,
+                "sessionsLimit": 10,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
     },
-    {
-      "$id": "",
-      "name": "elasticsearch-indexer",
-      "runtime": "node-18.0",
-      "execute": ["any"],
-      "events": [
-        "databases.*.collections.*.documents.*.create",
-        "databases.*.collections.*.documents.*.update",
-        "databases.*.collections.*.documents.*.delete"
-      ],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "entrypoint": "src/index.js",
-      "commands": "npm install",
-      "path": "functions/elasticsearch-indexer",
-      "vars": {
-        "ELASTICSEARCH_URL": "",
-        "ELASTICSEARCH_API_KEY": "",
-        "ELASTICSEARCH_INDEX": "tasks"
-      }
-    }
-  ]
+    "functions": [
+        {
+            "$id": "68f947d500081f79dd02",
+            "execute": [
+                "any"
+            ],
+            "name": "elasticsearch-search",
+            "enabled": true,
+            "logging": true,
+            "runtime": "node-22",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "index.js",
+            "commands": "npm install && npm run build",
+            "specification": "s-0.5vcpu-512mb",
+            "path": "functions/elasticsearch-search"
+        },
+        {
+            "$id": "68f948d9000a57ee569d",
+            "execute": [
+                "users"
+            ],
+            "name": "elasticsearch-indexer",
+            "enabled": true,
+            "logging": true,
+            "runtime": "node-22",
+            "scopes": [
+                "databases.read",
+                "databases.write",
+                "tables.read",
+                "collections.read",
+                "tables.write",
+                "collections.write"
+            ],
+            "events": [
+                "databases.*.create",
+                "databases.*.update",
+                "databases.*.delete"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "index.js",
+            "commands": "npm install && npm run build",
+            "specification": "s-0.5vcpu-512mb",
+            "path": "functions/elasticsearch-indexer"
+        }
+    ],
+    "tablesDB": [
+        {
+            "$id": "68ed2831002414dd5275",
+            "name": "users",
+            "enabled": true
+        },
+        {
+            "$id": "68f9033c000c2a1c40c9",
+            "name": "tasks",
+            "enabled": true
+        }
+    ],
+    "tables": [
+        {
+            "$id": "waitlist",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")"
+            ],
+            "databaseId": "68ed2831002414dd5275",
+            "name": "waitlist",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "email",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 40,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "name",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 40,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "taskslist",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")",
+                "update(\"any\")",
+                "delete(\"any\")"
+            ],
+            "databaseId": "68f9033c000c2a1c40c9",
+            "name": "taskslist",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "description",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "dueDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "format": "",
+                    "default": null
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 20,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "assignee",
+                    "type": "string",
+                    "required": false,
+                    "array": true,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "category",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 40,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "comments",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 20,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "priority",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 20,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "userEmail",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": []
+        }
+    ]
 }

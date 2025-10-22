@@ -1,0 +1,48 @@
+{
+  "projectId": "",
+  "projectName": "flashtasks",
+  "functions": [
+    {
+      "$id": "",
+      "name": "elasticsearch-search",
+      "runtime": "node-18.0",
+      "execute": ["any"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "src/index.js",
+      "commands": "npm install",
+      "path": "functions/elasticsearch-search",
+      "vars": {
+        "ELASTICSEARCH_URL": "",
+        "ELASTICSEARCH_API_KEY": "",
+        "ELASTICSEARCH_INDEX": "tasks"
+      }
+    },
+    {
+      "$id": "",
+      "name": "elasticsearch-indexer",
+      "runtime": "node-18.0",
+      "execute": ["any"],
+      "events": [
+        "databases.*.collections.*.documents.*.create",
+        "databases.*.collections.*.documents.*.update",
+        "databases.*.collections.*.documents.*.delete"
+      ],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "src/index.js",
+      "commands": "npm install",
+      "path": "functions/elasticsearch-indexer",
+      "vars": {
+        "ELASTICSEARCH_URL": "",
+        "ELASTICSEARCH_API_KEY": "",
+        "ELASTICSEARCH_INDEX": "tasks"
+      }
+    }
+  ]
+}
