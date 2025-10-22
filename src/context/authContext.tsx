@@ -36,7 +36,7 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
             .then(response => {
             setPopup({ type: "success", msg: "Login successful" })
             setUser(response)
-            router(callbackURL || "/dashboard")
+            router(callbackURL || "/account/dashboard")
             setLoading(false)
         })
         .catch(error => {
@@ -97,20 +97,6 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
             console.log(error);
             setLoading(false)
         });
-    }
-
-    async function getUsernames() {
-        setLoading(true)
-        await account.get()
-        .then(() => {
-            setPopup({ type: "success", msg: "Registered successful" })
-            router("/auth/waitlist/success")
-        })
-        .catch(error => {
-            setLoading(true)
-            setPopup({ type: "error", msg: error.message })
-            setLoading(false)
-        })
     }
 
     async function logOut() {

@@ -13,10 +13,6 @@ export default function Login() {
   const callbackURL = URLSearchParams.get("callbackURL") || ""
 
   return (
-    <div className="min-h-[400px] flex justify-between">
-
-      <div className="bg-gray-100 md:w-[40%] h-screen md:block hidden"></div>
-
       <div className="flex md:w-[60%] h-auto w-full items-center justify-center">
         <div className="sm:w-[445px] md:mx-0 mx-auto w-full p-6">
           <div className="flex flex-col justify-center gap-6 md:p-[5%] md:py-[5%] py-[80px]">
@@ -58,14 +54,13 @@ export default function Login() {
               )}
             </Formik>
 
-            <Link to="/register" className="text-center mt-4 text-[14px]">
+            <Link to="/auth/register" className="text-center mt-4 text-[14px]">
               Don't have an account? <span className="text-primary">Register</span>
             </Link>
 
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

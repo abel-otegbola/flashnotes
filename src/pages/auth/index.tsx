@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./login";
 import Waitlist from "./waitlist";
 import SuccessPage from "./success";
@@ -10,6 +10,8 @@ function AuthPages() {
       <div className="bg-[url('/bg.png')] bg-cover bg-center md:w-[45%] h-screen sticky top-0 md:block hidden"></div>
       <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Navigate to="/auth/waitlist" />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/waitlist/success" element={<SuccessPage />} />
       </Routes>
