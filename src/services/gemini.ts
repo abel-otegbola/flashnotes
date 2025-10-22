@@ -11,16 +11,24 @@ interface GeminiResponse {
 }
 
 /**
+ * Sleep utility for retry delays
+ */
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
  * Converts user input text into structured tasks using Google Gemini API
  * Returns null if the input is just generic conversation (hello, thanks, etc.)
  */
-export async function convertTextToTasks(text: string): Promise<todo[] | null> {
-  try {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    
-    if (!apiKey) {
-      throw new Error('Gemini API key not found. Please add VITE_GEMINI_API_KEY to your .env file');
-    }
+export async function convertTextToTasks(text: string, retries = 3): Promise<todo[] | null> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      
+      if (!apiKey) {
+        throw new Error('Gemini API key not found. Please add VITE_GEMINI_API_KEY to your .env file');
+      }
 
     const prompt = `You are an AI assistant that converts user input into actionable tasks. 
 
@@ -46,7 +54,7 @@ Return a JSON object with this exact structure:
       "status": "pending",
       "priority": "low|medium|high",
       "dueDate": "YYYY-MM-DD format if mentioned, otherwise null",
-      "createdAt": "current ISO date",
+      "$createdAt": "current ISO date",
       "comments": "0"
     }
   ]
@@ -56,77 +64,120 @@ If no actionable tasks detected, return: {"tasks": null}
 
 Return ONLY valid JSON, no markdown, no explanation.`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt
+                  }
+                ]
+              }
+            ],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 2048,
             }
-          ],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 2048,
-          }
-        })
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMessage = errorData.error?.message || 'Failed to generate tasks';
+        
+        // Check if it's an overload error and we have retries left
+        if (errorMessage.includes('overloaded') && attempt < retries) {
+          lastError = new Error(errorMessage);
+          const delay = Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+          console.log(`Gemini API overloaded. Retrying in ${delay/1000}s... (Attempt ${attempt + 1}/${retries})`);
+          await sleep(delay);
+          continue; // Retry
+        }
+        
+        throw new Error(errorMessage);
       }
-    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Failed to generate tasks');
-    }
+      const data: GeminiResponse = await response.json();
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      
+      if (!generatedText) {
+        throw new Error('No response from Gemini');
+      }
 
-    const data: GeminiResponse = await response.json();
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    
-    if (!generatedText) {
-      throw new Error('No response from Gemini');
-    }
+      // Clean up the response - remove markdown code blocks if present
+      let cleanedText = generatedText.trim();
+      cleanedText = cleanedText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+      
+      // Parse JSON response
+      const parsed = JSON.parse(cleanedText);
+      
+      // If Gemini determined this isn't a task, return null
+      if (parsed.tasks === null) {
+        return null;
+      }
 
-    // Clean up the response - remove markdown code blocks if present
-    let cleanedText = generatedText.trim();
-    cleanedText = cleanedText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    
-    // Parse JSON response
-    const parsed = JSON.parse(cleanedText);
-    
-    // If Gemini determined this isn't a task, return null
-    if (parsed.tasks === null) {
+      // Validate and return tasks
+      if (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
+        // Get user from localStorage
+        let userId = '';
+        let userEmail = '';
+        
+        try {
+          const userStr = localStorage.getItem('user');
+          if (userStr) {
+            const user = JSON.parse(userStr);
+            // Handle both Appwrite session format ($id) and custom User interface (id)
+            userId = user.$id || user.id || '';
+            userEmail = user.email || '';
+          }
+        } catch (e) {
+          console.error('Error reading user from localStorage:', e);
+        }
+
+        // Ensure each task has required fields
+        const validTasks = parsed.tasks.map((task: any) => ({
+          id: task.id || `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          title: task.title || 'Untitled Task',
+          description: task.description || '',
+          category: task.category || 'General',
+          status: task.status || 'pending',
+          priority: task.priority || 'medium',
+          dueDate: task.dueDate || undefined,
+          $createdAt: task.$createdAt || new Date().toISOString(),
+          comments: task.comments || '0',
+          $updatedAt: new Date().toISOString(),
+          userId: userId,
+          userEmail: userEmail
+        })) as todo[];
+
+        return validTasks;
+      }
+
       return null;
+    } catch (error) {
+      lastError = error as Error;
+      
+      // If it's the last attempt, throw the error
+      if (attempt === retries) {
+        console.error('Error converting text to tasks after all retries:', error);
+        throw error;
+      }
+      
+      // Otherwise, retry with exponential backoff
+      const delay = Math.pow(2, attempt) * 1000;
+      console.log(`Error occurred. Retrying in ${delay/1000}s... (Attempt ${attempt + 1}/${retries})`);
+      await sleep(delay);
     }
-
-    // Validate and return tasks
-    if (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
-      // Ensure each task has required fields
-      const validTasks = parsed.tasks.map((task: any) => ({
-        id: task.id || `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        title: task.title || 'Untitled Task',
-        description: task.description || '',
-        category: task.category || 'General',
-        status: task.status || 'pending',
-        priority: task.priority || 'medium',
-        dueDate: task.dueDate || undefined,
-        createdAt: task.createdAt || new Date().toISOString(),
-        comments: task.comments || '0',
-        updatedAt: new Date().toISOString()
-      })) as todo[];
-
-      return validTasks;
-    }
-
-    return null;
-  } catch (error) {
-    console.error('Error converting text to tasks:', error);
-    throw error;
   }
+
+  // If we exhausted all retries
+  throw lastError || new Error('Failed to convert text to tasks after multiple attempts');
 }

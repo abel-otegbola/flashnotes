@@ -10,8 +10,8 @@ type TasksContextValues = {
     tasks: todo[];
     loading: boolean;
     error: string | null;
-    addTask: (task: Omit<todo, 'id' | 'createdAt'>) => Promise<todo | null>;
-    addMultipleTasks: (tasks: Omit<todo, 'id' | 'createdAt'>[]) => Promise<todo[] | null>;
+    addTask: (task: Omit<todo, '$id' | 'id' | '$createdAt'>) => Promise<todo | null>;
+    addMultipleTasks: (tasks: Omit<todo, '$id' | 'id' | '$createdAt'>[]) => Promise<todo[] | null>;
     updateTask: (taskId: string, updates: Partial<todo>) => Promise<todo | null>;
     deleteTask: (taskId: string) => Promise<boolean>;
     getTasks: () => Promise<void>;
@@ -36,13 +36,29 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        console.log(user)
+    }, [user]);
+
     // Get all tasks for the current user
     const getTasks = async () => {
         setLoading(true);
         setError(null);
         
         try {
-            if (!user?.id) {
+            if (!user) {
+                console.log('No user found');
+                setTasks([]);
+                setLoading(false);
+                return;
+            }
+
+            // Handle both Appwrite session object ($id) and custom User interface (id)
+            const userId = (user as any).$id || user.id;
+            const userEmail = user.email;
+            
+            if (!userId || !userEmail) {
+                console.log('User missing id or email:', user);
                 throw new Error('User not authenticated');
             }
             
@@ -50,8 +66,7 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                 DATABASE_ID,
                 TASKS_COLLECTION_ID,
                 [
-                    Query.equal('userId', user.id),
-                    Query.orderDesc('createdAt'),
+                    Query.equal('userEmail', userEmail),
                     Query.limit(100)
                 ]
             );
@@ -68,12 +83,20 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
     };
 
     // Add a single task
-    const addTask = async (task: Omit<todo, 'id' | 'createdAt'>): Promise<todo | null> => {
+    const addTask = async (task: Omit<todo, '$id' | 'id' | '$createdAt'>): Promise<todo | null> => {
         setLoading(true);
         setError(null);
         
         try {
-            if (!user?.id || !user?.email) {
+            if (!user) {
+                throw new Error('User not authenticated');
+            }
+
+            // Handle both Appwrite session object ($id) and custom User interface (id)
+            const userId = (user as any).$id || user.id;
+            const userEmail = user.email;
+            
+            if (!userId || !userEmail) {
                 throw new Error('User not authenticated');
             }
             
@@ -84,8 +107,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                 status: task.status || 'pending',
                 priority: task.priority || 'medium',
                 comments: task.comments || '0',
-                userId: user.id,
-                userEmail: user.email
+                userId: userId,
+                userEmail: userEmail
             };
 
             // Only add optional fields if they exist
@@ -116,14 +139,14 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
     };
 
     // Add multiple tasks at once
-    const addMultipleTasks = async (tasksToAdd: Omit<todo, 'id' | 'createdAt'>[]): Promise<todo[] | null> => {
+    const addMultipleTasks = async (tasksToAdd: Omit<todo, '$id' | 'id' | '$createdAt'>[]): Promise<todo[] | null> => {
         setLoading(true);
         setError(null);
         
         try {
-            if (!user?.id || !user?.email) {
-                throw new Error('User not authenticated');
-            }
+            // Handle both Appwrite session object ($id) and custom User interface (id)
+            const userId = (user as any).$id || user.id;
+            const userEmail = user.email;
             
             const createdTasks: todo[] = [];
             
@@ -136,8 +159,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                     status: task.status || 'pending',
                     priority: task.priority || 'medium',
                     comments: task.comments || '0',
-                    userId: user.id,
-                    userEmail: user.email
+                    userId: task.userId,
+                    userEmail: task.userEmail
                 };
 
                 // Only add optional fields if they exist
@@ -175,8 +198,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
         setError(null);
         
         try {
-            // Remove createdAt and updatedAt from updates as they're auto-managed
-            const { createdAt, updatedAt, ...updateData } = updates as any;
+            // Remove $createdAt and $updatedAt from updates as they're auto-managed by Appwrite
+            const { $createdAt, $updatedAt, ...updateData } = updates as any;
 
             const response = await databases.updateDocument(
                 DATABASE_ID,
@@ -186,7 +209,7 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
             );
             
             const updatedTask = response as unknown as todo;
-            setTasks(prev => prev.map(task => task.id === taskId ? updatedTask : task));
+            setTasks(prev => prev.map(task => task.$id === taskId ? updatedTask : task));
             toast.success('Task updated successfully!');
             return updatedTask;
         } catch (err) {
@@ -211,8 +234,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                 TASKS_COLLECTION_ID,
                 taskId
             );
-            
-            setTasks(prev => prev.filter(task => task.id !== taskId));
+
+            setTasks(prev => prev.filter(task => task.$id !== taskId));
             toast.success('Task deleted successfully!');
             return true;
         } catch (err) {
@@ -226,9 +249,9 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
         }
     };
 
-    // Get task by ID
+    // Get a task by ID
     const getTaskById = (taskId: string): todo | undefined => {
-        return tasks.find(task => task.id === taskId);
+        return tasks.find(task => task.$id === taskId);
     };
 
     // Filter tasks by status

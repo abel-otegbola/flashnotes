@@ -145,6 +145,20 @@ function Dashboard() {
         </div>
       )}
 
+      {/* Loading State */}
+      {isGenerating && (
+        <div className="flex flex-col items-center justify-center gap-4 p-8 rounded-lg border border-border-gray-100 dark:border-gray-700 bg-bg-gray-100 dark:bg-dark-bg-secondary/50">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-gray-200 dark:border-gray-700 rounded-full"></div>
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+          </div>
+          <div className="text-center">
+            <p className="font-medium text-gray-700 dark:text-gray-300">Analyzing your input...</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">AI is creating your tasks</p>
+          </div>
+        </div>
+      )}
+
       {/* Generated Tasks */}
       {generatedTasks && generatedTasks.length > 0 && (
         <div className="flex flex-col gap-4">
@@ -168,7 +182,7 @@ function Dashboard() {
           
           {generatedTasks.map((task, index) => (
             <div 
-              key={task.id} 
+              key={task.$id || task.id || index} 
               className="p-4 rounded-lg border border-border-gray-100 dark:border-gray-700 bg-bg-gray-100 dark:bg-dark-bg-secondary/50 hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between items-start mb-2">
