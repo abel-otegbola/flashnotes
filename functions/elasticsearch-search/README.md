@@ -4,16 +4,63 @@ This Appwrite Function performs full-text search on tasks using Elasticsearch.
 
 ## Setup in Appwrite Console
 
-1. **Create Function**:
+### Method 1: Using Appwrite Console (Manual Upload)
+
+1. **Prepare deployment package**:
+   ```powershell
+   # In the function folder
+   cd functions/elasticsearch-search
+   npm install
+   
+   # Create a tar.gz file (need 7-Zip or similar)
+   # Include: src/, node_modules/, package.json
+   ```
+
+2. **Create Function in Console**:
    - Go to Functions in Appwrite Console
    - Click "Create function"
    - Name: `elasticsearch-search`
    - Runtime: Node.js 18.0 or Node.js 20.0
-   - Entrypoint: `index.js`
+   - Entrypoint: `src/index.js`
    - Execute Access: Any (or specific roles as needed)
+   - Build Command: `npm install`
+
+3. **Upload Code**:
+   - Click "Create deployment"
+   - Upload the entire `functions/elasticsearch-search` folder as a tar.gz
+   - Or manually upload all files maintaining the structure:
+     ```
+     /src/index.js
+     /package.json
+     /package-lock.json (if exists)
+     ```
+
+### Method 2: Using Appwrite CLI (Recommended)
+
+1. **Install Appwrite CLI** (if not installed):
+   ```powershell
+   npm install -g appwrite
+   ```
+
+2. **Login to Appwrite**:
+   ```powershell
+   appwrite login
+   ```
+
+3. **Initialize project** (if not already):
+   ```powershell
+   appwrite init project
+   ```
+
+4. **Deploy function**:
+   ```powershell
+   appwrite deploy function
+   ```
+   - Select the function from the list
+   - CLI will handle packaging and upload automatically
 
 2. **Environment Variables**:
-   Set these in the function settings:
+   Set these in the function settings (after creating the function):
    ```
    ELASTICSEARCH_URL=https://your-elastic-cluster:9200
    ELASTICSEARCH_API_KEY=your_base64_api_key
@@ -23,25 +70,25 @@ This Appwrite Function performs full-text search on tasks using Elasticsearch.
    ELASTICSEARCH_INDEX=tasks
    ```
 
-3. **Deploy Code**:
-   - In Appwrite Console, go to your function
-   - Click "Deploy" or "Deploy from folder"
-   - Upload this folder (package.json + index.js)
-   - Or use Appwrite CLI:
-     ```bash
-     appwrite functions createDeployment \
-       --functionId=<your-function-id> \
-       --activate=true \
-       --entrypoint="index.js" \
-       --code="."
-     ```
-
-4. **Get Function ID**:
-   - Copy the Function ID from Appwrite Console
+3. **Get Function ID**:
+   - Copy the **Function ID** from Appwrite Console
    - Add to your frontend `.env.local`:
      ```
      VITE_APPWRITE_SEARCH_FUNCTION_ID=<function-id>
      ```
+
+## File Structure
+
+Your function folder should look like this:
+```
+functions/elasticsearch-search/
+├── src/
+│   └── index.js          # Main function code
+├── package.json
+└── README.md
+```
+
+The `src/` folder is required by Appwrite!
 
 ## Testing
 

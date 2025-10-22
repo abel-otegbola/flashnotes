@@ -4,12 +4,14 @@ This Appwrite Function automatically indexes tasks into Elasticsearch when they'
 
 ## Setup in Appwrite Console
 
+### Method 1: Console Upload (Simple)
+
 1. **Create Function**:
    - Go to Functions in Appwrite Console
    - Click "Create function"
    - Name: `elasticsearch-indexer`
    - Runtime: Node.js 18.0 or Node.js 20.0
-   - Entrypoint: `index.js`
+   - Entrypoint: `src/index.js`
    - Execute Access: Any
 
 2. **Environment Variables**:
@@ -31,15 +33,22 @@ This Appwrite Function automatically indexes tasks into Elasticsearch when they'
    Replace `<YOUR_TASKS_COLLECTION_ID>` with your actual Appwrite collection ID for tasks.
 
 4. **Deploy Code**:
-   - Upload this folder to Appwrite
-   - Or use Appwrite CLI:
-     ```bash
-     appwrite functions createDeployment \
-       --functionId=<your-function-id> \
-       --activate=true \
-       --entrypoint="index.js" \
-       --code="."
+   - Create a tar.gz file with this folder structure:
      ```
+     elasticsearch-indexer/
+     ├── src/
+     │   └── index.js
+     └── package.json
+     ```
+   - Upload to Appwrite Console
+
+### Method 2: Appwrite CLI (Recommended)
+
+From the project root:
+```bash
+appwrite deploy function
+```
+Select `elasticsearch-indexer` when prompted. The CLI will use `appwrite.json` config.
 
 ## How It Works
 
@@ -74,3 +83,16 @@ curl -X GET "https://your-cluster:9200/tasks/_search?pretty" \
   -H "Content-Type: application/json" \
   -d '{"query": {"match_all": {}}}'
 ```
+
+## File Structure
+
+Your function folder should look like this:
+```
+functions/elasticsearch-indexer/
+├── src/
+│   └── index.js          # Main function code
+├── package.json
+└── README.md
+```
+
+The `src/` folder is required by Appwrite!
