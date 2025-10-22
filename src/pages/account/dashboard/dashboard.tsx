@@ -3,24 +3,94 @@ import Input from "../../../components/input/input"
 import { Formik } from "formik";
 import Button from "../../../components/button/button";
 import { ArrowRight } from "@solar-icons/react";
+import VoiceInput from "../../../components/voiceInput/voiceInput";
+import { useState } from "react";
+import { convertTextToTasks } from "../../../services/gemini";
+import { todo } from "../../../interface/todo";
+import { useTasks } from "../../../context/tasksContext";
+import { useUser } from "../../../context/authContext";
 
 function Dashboard() {
+  const [inputText, setInputText] = useState("")
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generatedTasks, setGeneratedTasks] = useState<todo[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { addMultipleTasks, loading: savingTasks } = useTasks()
+  const { user } = useUser();
+
+  const handleTranscript = (text: string) => {
+    // Append the transcribed text to existing text
+    setInputText(prev => prev ? `${prev} ${text}` : text)
+  }
+
+  const handleGenerateTasks = async () => {
+    if (!inputText.trim()) {
+      setError("Please enter some text first");
+      return;
+    }
+
+    setIsGenerating(true);
+    setError(null);
+    
+    try {
+      const tasks = await convertTextToTasks(inputText);
+      
+      if (tasks === null) {
+        setError("This doesn't seem to be a task. Try describing something you need to do!");
+        setGeneratedTasks(null);
+      } else {
+        setGeneratedTasks(tasks);
+        setError(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate tasks");
+      setGeneratedTasks(null);
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
+  const handleSaveTasks = async () => {
+    if (!generatedTasks || generatedTasks.length === 0) return;
+    
+    const tasksToSave = generatedTasks.map(task => ({
+      title: task.title,
+      userId: user?.id || "",
+      userEmail: user?.email || "",
+      description: task.description,
+      category: task.category,
+      status: task.status,
+      priority: task.priority,
+      dueDate: task.dueDate,
+      comments: task.comments || '0'
+    }));
+
+    const savedTasks = await addMultipleTasks(tasksToSave);
+    
+    if (savedTasks) {
+      // Clear the form after successful save
+      setInputText("");
+      setGeneratedTasks(null);
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-6 bg-white dark:bg-[#151515] md:rounded-[10px] md:px-[16.66%] py-[10%] px-6 h-full mb-4">
+    <div className="flex flex-col gap-6 bg-white dark:bg-dark-bg md:rounded-[10px] md:px-[16.66%] py-[10%] px-6 h-full mb-4">
       <h1 className="font-medium md:text-[40px] text-[20px] bg-gradient-to-r bg-clip-text text-transparent from-black dark:from-white to-primary leading-[120%]">
         Hi there, Abel <br />
         What do you want to do today?
       </h1>
 
       <div className="flex justify-between gap-4">
-        <p className="text-gray-400">Continue from where you stopped yesterday and add today’s tasks</p>
+        <p className="text-gray-400">Continue from where you stopped yesterday and add today's tasks</p>
         <Link to={"tasks"} className="text-primary">View all</Link>
       </div>
 
-      <div className="flex flex-col gap-2 p-4 rounded-[10px] border border-gray-100 dark:border-gray-500/[0.3]">
+      <div className="flex flex-col gap-2 p-4 rounded-[10px] border border-border-gray-100 dark:border-gray-700 bg-gray-100 dark:bg-dark-bg-secondary/50">
         <div className="flex gap-2 w-full">
           <Formik
-                initialValues={{ search: "" }}
+                initialValues={{ search: inputText }}
+                enableReinitialize
                 onSubmit={(values, { setSubmitting }) => {
                     console.log(values)
                     setSubmitting(false);
@@ -28,22 +98,106 @@ function Dashboard() {
             >
                 {({ values, handleChange, handleSubmit }) => (
                 <form onSubmit={handleSubmit} className="flex-1">
-                    <textarea placeholder="Start speaking or writing..." onChange={handleChange} className="border-none w-full h-[100px] outline-none" name="search" value={values.search} />
+                    <textarea 
+                      placeholder="Start speaking or writing..." 
+                      onChange={(e) => {
+                        handleChange(e)
+                        setInputText(e.target.value)
+                      }}
+                      className="border-none w-full h-[100px] outline-none bg-transparent dark:text-white dark:placeholder-gray-400 resize-none" 
+                      name="search" 
+                      value={inputText} 
+                    />
                 </form>
                 )
             }
             </Formik>
-          <p>Audio</p>
+          <VoiceInput onTranscript={handleTranscript} />
         </div>
 
         <div className="flex justify-between items-end">
-          <p>0/1000</p>
-          <Button className="rounded-full" size="small">
-            Generate tasks
-            <span className="bg-white rounded-full p-2 text-primary md:-mr-2 -mr-1"><ArrowRight color="currentColor" size={12}/></span>
+          <p className="text-gray-400 text-sm">{inputText.length}/1000</p>
+          <Button 
+            className="rounded-full" 
+            size="small"
+            onClick={handleGenerateTasks}
+            disabled={isGenerating || !inputText.trim()}
+          >
+            {isGenerating ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                Generate tasks
+                <span className="bg-white rounded-full p-2 text-primary md:-mr-2 -mr-1"><ArrowRight color="currentColor" size={12}/></span>
+              </>
+            )}
           </Button>
         </div>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="p-4 rounded-lg bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300">
+          {error}
+        </div>
+      )}
+
+      {/* Generated Tasks */}
+      {generatedTasks && generatedTasks.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-[20px] font-bold">Generated Tasks ({generatedTasks.length})</h2>
+            <Button 
+              size="small"
+              onClick={handleSaveTasks}
+              disabled={savingTasks}
+            >
+              {savingTasks ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save All Tasks'
+              )}
+            </Button>
+          </div>
+          
+          {generatedTasks.map((task, index) => (
+            <div 
+              key={task.id} 
+              className="p-4 rounded-lg border border-border-gray-100 dark:border-gray-700 bg-bg-gray-100 dark:bg-dark-bg-secondary/50 hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold text-[16px]">{task.title}</h3>
+                <div className="flex gap-2">
+                  {task.priority && (
+                    <span className={`text-[10px] px-2 py-1 rounded-full font-medium ${
+                      task.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                      task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                      'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    }`}>
+                      {task.priority}
+                    </span>
+                  )}
+                  <span className="text-[10px] px-2 py-1 rounded-full bg-primary/20 text-primary font-medium">
+                    {task.category}
+                  </span>
+                </div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-[14px] mb-2">{task.description}</p>
+              {task.dueDate && (
+                <p className="text-[12px] text-gray-500 dark:text-gray-500">
+                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

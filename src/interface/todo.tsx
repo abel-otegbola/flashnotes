@@ -4,6 +4,8 @@ export interface todo {
   description: string;
   comments: string;
   category: string;
+  userId: string;
+  userEmail: string;
   assignee?: string;
   invites?: string[];
   status: 'pending' | 'upcoming' | 'in progress' | 'completed' | 'suspended';

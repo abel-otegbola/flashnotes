@@ -5,6 +5,7 @@ import { CloseCircle } from "@solar-icons/react";
 import Input from "../input/input";
 import Button from "../button/button";
 import { Formik } from "formik";
+import { useUser } from "../../context/authContext";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface AddTaskModalProps {
 }
 
 export default function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalProps) {
+  const { user } = useUser()
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -35,6 +37,8 @@ export default function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalPro
   const handleSubmit = () => {
     const newTask: todo = {
       id: Date.now().toString(),
+      userId: user?.id || "",
+      userEmail: user?.email || "",
       title: form.title,
       description: form.description,
       comments: form.comments || "0",
@@ -95,7 +99,7 @@ export default function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalPro
 
                     <Button
                     onClick={handleSubmit}
-                    className="bg-black text-white rounded-md p-2 mt-3 hover:bg-gray-800 transition"
+                    className="bg-black text-white rounded-md p-2 mt-3 hover:bg-dark-bg-secondary dark:hover:bg-dark-bg-secondary transition"
                     >
                     Add Task
                     </Button>

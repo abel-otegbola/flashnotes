@@ -10,10 +10,10 @@ import Tasks from "./tasks/page";
 
 function AccountPages() {
   return (
-    <div className="min-h-[400px] flex justify-between bg-gray-100 dark:bg-[#101010]">
+    <div className="min-h-[400px] flex justify-between bg-bg-gray-100 dark:bg-dark">
         <Sidebar />
         <div className="flex flex-col flex-1 gap-4 md:mt-4 md:mr-4 md:ml-0 ml-0">
-            <div className="flex p-4 md:rounded-[10px] items-center justify-between bg-white dark:bg-[#151515]">
+            <div className="flex p-4 md:rounded-[10px] items-center justify-between bg-white dark:bg-dark-bg">
                 <Formik
                     initialValues={{ search: "" }}
                     onSubmit={(values, { setSubmitting }) => {
@@ -22,8 +22,15 @@ function AccountPages() {
                     }}
                 >
                     {({ values, errors, touched, handleChange, handleSubmit }) => (
-                    <form onSubmit={handleSubmit} className="bg-gray-100 dark:bg-[#202020] rounded-[10px] border border-gray-100 dark:border-gray-500/[0.3] md:block hidden">
-                        <Input leftIcon={<Magnifer />} placeholder="Search or type a command" onChange={handleChange} name="search" className="md:w-[300px]" value={values.search} error={touched.search ? errors.search : ""} />
+                    <form onSubmit={handleSubmit} className="bg-bg-gray-100 dark:bg-dark-bg-secondary rounded-[10px] border border-border-gray-100 dark:border-gray-700 md:block hidden">
+                        <Input 
+                            leftIcon={<Magnifer />} 
+                            placeholder="Search or type a command" 
+                            onChange={handleChange} name="search" 
+                            className="md:w-[300px] rounede-[12px]" 
+                            value={values.search} 
+                            error={touched.search ? errors.search : ""} 
+                        />
                     </form>
                     )
                 }
