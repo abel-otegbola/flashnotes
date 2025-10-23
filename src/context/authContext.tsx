@@ -30,19 +30,22 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
     const router = useNavigate();
 
     async function signIn(email: string, password: string, callbackURL: string) {
-        setLoading(true)
-        await account.createEmailPasswordSession(email, password)
-            .then(response => {
-            setPopup({ type: "success", msg: "Login successful" })
-            setUser(response)
-            router(callbackURL || "/account/dashboard")
-            setLoading(false)
-        })
-        .catch(error => {
-            setLoading(true)
-            setPopup({ type: "error", msg: error.message })
-            setLoading(false)
-        })
+        setLoading(true);
+        try {
+            // Create session
+            await account.createEmailPasswordSession(email, password);
+
+            // Fetch full account details (name, email, prefs, etc.)
+            const loggedIn = await account.get();
+
+            setPopup({ type: "success", msg: "Login successful" });
+            setUser(loggedIn);
+            router(callbackURL || "/account/dashboard");
+        } catch (error: any) {
+            setPopup({ type: "error", msg: error?.message || 'Login failed' });
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function signUp(name: string, email: string, password: string, callbackURL: string) {

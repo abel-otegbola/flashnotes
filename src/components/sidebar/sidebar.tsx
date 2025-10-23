@@ -116,7 +116,7 @@ function Sidebar() {
 
                     {/* User Info */}
                     {user && (
-                        <div className={`flex items-center gap-3 ${open ? "px-3 py-2 rounded-lg bg-bg-gray-100 dark:bg-dark-bg/50" : "p-1"}`}>
+                        <div className={`flex items-center gap-3 p-1`}>
                             {/* User Avatar */}
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-fuchsia-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                                 {getUserInitial()}
