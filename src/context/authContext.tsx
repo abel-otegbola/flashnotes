@@ -14,7 +14,6 @@ type values = {
     setPopup: (aug0: values["popup"]) => void;
     signIn: (email: string, password: string, callbackURL: string) => void; 
     signUp: ( name: string, email: string, password: string, callbackURL: string) => void;
-    joinWaitlist: ( name: string, email: string, password: string, callbackURL: string) => void;
     logOut: () => void;
 }
 
@@ -48,20 +47,6 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
 
     async function signUp(name: string, email: string, password: string, callbackURL: string) {
         setLoading(true)
-        await account.create(ID.unique(), email, password, name)
-        .then(() => {
-            setPopup({ type: "success", msg: "Registered successful" })
-            signIn(email, password, callbackURL);
-        })
-        .catch(error => {
-            setLoading(true)
-            setPopup({ type: "error", msg: error.message })
-            setLoading(false)
-        })
-    }
-    
-    async function joinWaitlist(name: string, email: string, password: string, callbackURL: string) {
-        setLoading(true)
         
         const promise = tablesDB.listRows({
             databaseId: "68ed2831002414dd5275",
@@ -81,9 +66,9 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
                         databaseId: '68ed2831002414dd5275',
                         tableId: 'waitlist',
                         rowId: ID.unique(),
-                        data: { email, password, name }
+                        data: { email, name }
                     });
-                    router("/auth/waitlist/success")
+                    signIn(email, password, callbackURL || "/account/dashboard")
                 })
                 .catch(error => {
                     setLoading(true)
@@ -98,7 +83,7 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
             setLoading(false)
         });
     }
-
+    
     async function logOut() {
         await account.deleteSession("current");
         setUser(null);
@@ -128,7 +113,7 @@ const AuthProvider = ({ children }: { children: ReactNode}) => {
     }, [popup])
 
     return (
-        <AuthContext.Provider value={{ user, popup, loading, setPopup, signIn, signUp, joinWaitlist, logOut }}>
+        <AuthContext.Provider value={{ user, popup, loading, setPopup, signIn, signUp, logOut }}>
             <Toaster containerClassName="p-8" />
             {children}
         </AuthContext.Provider>

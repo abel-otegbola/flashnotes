@@ -14,7 +14,7 @@ export default function Login() {
 
   return (
       <div className="flex md:w-[60%] h-auto w-full items-center justify-center">
-        <div className="sm:w-[445px] md:mx-0 mx-auto w-full p-6">
+        <div className="sm:w-[400px] md:mx-0 mx-auto w-full p-6">
           <div className="flex flex-col justify-center gap-6 md:p-[5%] md:py-[5%] py-[80px]">
             <div>
               <h1 className="font-semibold md:text-[30px] text-[24px] text-dark-500">Welcome 👋</h1>
@@ -54,7 +54,7 @@ export default function Login() {
               )}
             </Formik>
 
-            <Link to="/auth/register" className="text-center mt-4 text-[14px]">
+            <Link to="/auth/signup" className="text-center mt-4 text-[14px]">
               Don't have an account? <span className="text-primary">Register</span>
             </Link>
 

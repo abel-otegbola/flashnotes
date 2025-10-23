@@ -10,8 +10,8 @@ import LogoIcon from "../../../assets/icons/logo";
 import { Letter, Lock, User } from "@solar-icons/react";
 import BlurReveal from "../../../components/animations/blurReveal";
 
-export default function Waitlist() {
-  const { joinWaitlist, loading } = useContext(AuthContext);
+export default function SignupPage() {
+  const { signUp, loading } = useContext(AuthContext);
   const [URLSearchParams] = useSearchParams()
   const callbackURL = URLSearchParams.get("callbackURL") || ""
 
@@ -23,13 +23,12 @@ export default function Waitlist() {
             <div className="flex flex-col gap-2">
               <BlurReveal preset="slide-right">
                 <div className="flex gap-2 items-center">
-                  <LogoIcon />
-                  <p className="bg-[#E9FFEE] text-[#40A65B] text-[10px] px-2 py-1 rounded-full">Coming soon</p>
+                  <LogoIcon /><span className="text-dark-500 font-bold">Flashtasks</span>
                 </div>
               </BlurReveal>
 
               <BlurReveal preset="slide-left">
-                <h1 className="font-bold md:text-[20px] text-[16px] text-dark-500">Get early access</h1>
+                <h1 className="font-bold md:text-[20px] text-[16px] text-dark-500">Get Started now</h1>
               </BlurReveal>
               <BlurReveal preset="slide-left">
                 <p className="text-gray">Help shape flashtasks, and enjoy free premium perks at launch. </p>
@@ -39,7 +38,7 @@ export default function Waitlist() {
               initialValues={{ email: "", name: "", password: "" }}
               validationSchema={registerSchema}
               onSubmit={(values, { setSubmitting }) => {
-                joinWaitlist(values.name, values.email, values.password, callbackURL || "/account/dashboard");
+                signUp(values.name, values.email, values.password, callbackURL || "/account/dashboard");
                 setSubmitting(false);
               }}
             >
@@ -78,22 +77,17 @@ export default function Waitlist() {
                       leftIcon={<Lock weight="Outline" />}
                     />
                   
-                  <BlurReveal preset="slide-left">
-                    <Button type="submit" className="w-full">
-                      {isSubmitting || loading ? <LoadingIcon color="white" className="animate-spin w-[20px]" /> : "Join waitlist"}
-                    </Button>
-                  </BlurReveal>
+                  <Button type="submit" className="w-full mt-4">
+                    {isSubmitting || loading ? <LoadingIcon color="white" className="animate-spin w-[20px]" /> : "Register"}
+                  </Button>
                 </form>
 
               )}
             </Formik>
 
-            <div className="py-4 flex flex-col gap-4">
-              <BlurReveal preset="slide-right">
-                <p>Join over 10+ users</p>
-              </BlurReveal>
-              <img src="/users.png" alt="users" width={220} height={36} className="" />
-            </div>
+            <Link to="/auth/login" className="text-center mt-4 text-[14px]">
+              Already have an account? <span className="text-primary">Login</span>
+            </Link>
           </div>
         </div>
       </div>

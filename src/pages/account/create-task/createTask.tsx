@@ -55,7 +55,7 @@ function CreateTask() {
     
     const tasksToSave = generatedTasks.map(task => ({
       title: task.title,
-      userId: user?.id || "",
+      userId: user?.$id as string || "",
       userEmail: user?.email || "",
       description: task.description,
       category: task.category,

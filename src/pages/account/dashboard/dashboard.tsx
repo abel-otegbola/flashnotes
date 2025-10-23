@@ -1,17 +1,10 @@
 import { Link } from "react-router-dom"
-import Input from "../../../components/input/input"
-import { Formik } from "formik";
-import Button from "../../../components/button/button";
-import { ArrowRight } from "@solar-icons/react";
-import VoiceInput from "../../../components/voiceInput/voiceInput";
-import { useState } from "react";
-import { convertTextToTasks } from "../../../services/gemini";
-import { todo } from "../../../interface/todo";
+import { useEffect } from "react";
 import { useTasks } from "../../../context/tasksContext";
 import { useUser } from "../../../context/authContext";
 
 function Dashboard() {
-  const { tasks, loading } = useTasks();
+  const { tasks, loading, getTasks } = useTasks();
   const { user } = useUser();
 
   const total = tasks.length;
@@ -20,11 +13,15 @@ function Dashboard() {
 
   const recent = tasks.slice(0, 5);
 
+  useEffect(() => {
+    getTasks(user?.email || "");
+  }, [user]);
+
   return (
     <div className="flex flex-col gap-6 bg-white dark:bg-dark-bg border border-gray-500/[0.1] md:rounded-[10px] md:px-[8%] py-8 px-6 h-full mb-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-semibold text-2xl">Welcome back, {user?.name || user?.email}</h1>
+          <h1 className="font-semibold text-2xl">Welcome back, {user.name}</h1>
           <p className="text-sm text-gray-500">Here's a quick overview of your tasks</p>
         </div>
         <div className="flex gap-4">

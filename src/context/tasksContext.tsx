@@ -5,6 +5,7 @@ import { databases } from "../appwrite/appwrite";
 import { todo } from '../interface/todo';
 import toast from "react-hot-toast";
 import { useUser } from './authContext';
+import { User } from '../interface/auth';
 
 type TasksContextValues = {
     tasks: todo[];
@@ -14,7 +15,7 @@ type TasksContextValues = {
     addMultipleTasks: (tasks: Omit<todo, '$id' | 'id' | '$createdAt'>[]) => Promise<todo[] | null>;
     updateTask: (taskId: string, updates: Partial<todo>) => Promise<todo | null>;
     deleteTask: (taskId: string) => Promise<boolean>;
-    getTasks: () => Promise<void>;
+    getTasks: (userEmail: string) => Promise<void>;
     getTaskById: (taskId: string) => todo | undefined;
     filterTasksByStatus: (status: todo['status']) => todo[];
     filterTasksByCategory: (category: string) => todo[];
@@ -31,37 +32,16 @@ const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || 'YOUR_DATABASE_
 const TASKS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_TASKS_COLLECTION_ID || 'YOUR_TASKS_COLLECTION_ID';
 
 const TasksProvider = ({ children }: { children: ReactNode}) => {
-    const { user } = useUser();
     const [tasks, setTasks] = useState<todo[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        console.log(user)
-    }, [user]);
-
     // Get all tasks for the current user
-    const getTasks = async () => {
+    const getTasks = async (userEmail: string) => {
         setLoading(true);
         setError(null);
         
         try {
-            if (!user) {
-                console.log('No user found');
-                setTasks([]);
-                setLoading(false);
-                return;
-            }
-
-            // Handle both Appwrite session object ($id) and custom User interface (id)
-            const userId = (user as any).$id || user.id;
-            const userEmail = user.email;
-            
-            if (!userId || !userEmail) {
-                console.log('User missing id or email:', user);
-                throw new Error('User not authenticated');
-            }
-            
             const response = await databases.listDocuments(
                 DATABASE_ID,
                 TASKS_COLLECTION_ID,
@@ -70,7 +50,7 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                     Query.limit(100)
                 ]
             );
-            
+
             setTasks(response.documents as unknown as todo[]);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to fetch tasks';
@@ -87,19 +67,7 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
         setLoading(true);
         setError(null);
         
-        try {
-            if (!user) {
-                throw new Error('User not authenticated');
-            }
-
-            // Handle both Appwrite session object ($id) and custom User interface (id)
-            const userId = (user as any).$id || user.id;
-            const userEmail = user.email;
-            
-            if (!userId || !userEmail) {
-                throw new Error('User not authenticated');
-            }
-            
+        try {            
             const taskData: any = {
                 title: task.title,
                 description: task.description,
@@ -107,8 +75,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                 status: task.status || 'pending',
                 priority: task.priority || 'medium',
                 comments: task.comments || '0',
-                userId: userId,
-                userEmail: userEmail
+                userId: task.userId,
+                userEmail: task.userEmail
             };
 
             // Only add optional fields if they exist
@@ -143,11 +111,7 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
         setLoading(true);
         setError(null);
         
-        try {
-            // Handle both Appwrite session object ($id) and custom User interface (id)
-            const userId = (user as any).$id || user.id;
-            const userEmail = user.email;
-            
+        try {            
             const createdTasks: todo[] = [];
             
             // Create tasks sequentially to avoid rate limiting
@@ -263,11 +227,6 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
     const filterTasksByCategory = (category: string): todo[] => {
         return tasks.filter(task => task.category === category);
     };
-
-    // Load tasks on mount
-    useEffect(() => {
-        getTasks();
-    }, []);
 
     const value: TasksContextValues = {
         tasks,

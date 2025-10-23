@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./login";
-import Waitlist from "./waitlist";
 import SuccessPage from "./success";
+import SignupPage from "./signup";
 
 function AuthPages() {
   return (
@@ -11,9 +11,8 @@ function AuthPages() {
       <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Navigate to="/auth/waitlist" />} />
-          <Route path="/waitlist" element={<Waitlist />} />
-          <Route path="/waitlist/success" element={<SuccessPage />} />
+          <Route path="/signup" element={<SignupPage/>} />
+          <Route path="/signup/success" element={<SuccessPage />} />
       </Routes>
 
     </div>

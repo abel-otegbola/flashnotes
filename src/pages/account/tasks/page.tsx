@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddCircle, Widget4, MenuDots, List, Calendar as CalendarIcon } from "@solar-icons/react";
 import TodoCard from "../../../components/cards/todoCard";
 import AddTaskModal from "../../../components/modals/addTaskModal";
@@ -8,6 +8,7 @@ import { todo } from "../../../interface/todo";
 import Button from "../../../components/button/button";
 import { useTasks } from "../../../context/tasksContext";
 import SearchBar from "../../../components/search/searchBar";
+import { useUser } from "../../../context/authContext";
 
 const sections = [
   { key: "todo", title: "Todo", filter: "upcoming", color: "yellow" },
@@ -32,9 +33,16 @@ function Tasks() {
     const [showModal, setShowModal] = useState(false);
     const [viewMode, setViewMode] = useState<ViewMode>('kanban');
     const [currentDate, setCurrentDate] = useState(new Date());
-    const { tasks, loading, addTask, updateTask, deleteTask } = useTasks();
+    const { tasks, loading, addTask, updateTask, deleteTask, getTasks } = useTasks();
     const [selectedTask, setSelectedTask] = useState<todo | null>(null);
     const [detailsOpen, setDetailsOpen] = useState(false);
+    const { user } = useUser();
+
+    useEffect(() => {
+    if (user) {
+        getTasks(user.email || "");
+    }
+    }, [user]);
 
     const openTaskDetails = (task: todo) => {
         setSelectedTask(task);
@@ -101,10 +109,6 @@ function Tasks() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {/* Search */}
-                    <div className="min-w-[260px] w-full md:w-[320px]">
-                        <SearchBar />
-                    </div>
                     {/* View Toggle */}
                     <div className="flex items-center gap-1 bg-bg-gray-100 dark:bg-dark-bg-secondary p-1 rounded-lg border border-gray-500/[0.2]">
                         <button

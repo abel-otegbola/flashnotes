@@ -116,7 +116,7 @@ export default function AddTaskModal({
     } else if (mode === 'add' && onAdd) {
       // Create new task
       const newTask: Omit<todo, '$id' | 'id' | '$createdAt'> = {
-        userId: user?.id || "",
+        userId: user?.$id || "",
         userEmail: user?.email || "",
         title: form.title,
         description: form.description,

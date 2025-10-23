@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { searchTasks, SearchTask } from "../../services/search";
 import { useUser } from "../../context/authContext";
 import LoadingIcon from "../../assets/icons/loading";
+import { Magnifer } from "@solar-icons/react";
 
 interface Props {
   onResults?: (results: SearchTask[], query: string) => void;
@@ -19,6 +20,7 @@ export default function SearchBar({ onResults, placeholder = "Search tasks..." }
 
   useEffect(() => {
     const run = async () => {
+      console.log(user?.email)
       if (!user?.email) return;
       if (!debouncedQuery || debouncedQuery.trim().length < 2) {
         setResults([]);
@@ -34,14 +36,11 @@ export default function SearchBar({ onResults, placeholder = "Search tasks..." }
     run();
   }, [debouncedQuery, user?.email]);
 
-  useEffect(() => {
-    console.log("Search results updated:", results, query);
-  }, [results, query]);
-
   return (
-    <div className="relative w-full">
+    <div className="flex items-center relative w-full border border-gray-300 dark:border-gray-700 rounded-lg pl-2">
+      <Magnifer size={16} color="currentColor" />
       <input
-        className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg outline-none focus:ring-2 focus:ring-primary"
+        className="w-full p-2 bg-transparent rounded-lg outline-none"
         placeholder={placeholder}
         value={query}
         onChange={(e) => {setQuery(e.target.value); console.log("Input changed:", e.target.value); }}
