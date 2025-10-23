@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AddCircle, Widget4, MenuDots, List, Calendar as CalendarIcon } from "@solar-icons/react";
 import TodoCard from "../../../components/cards/todoCard";
 import AddTaskModal from "../../../components/modals/addTaskModal";
+import TaskDetailsModal from "../../../components/modals/taskDetailsModal";
 import { todo } from "../../../interface/todo";
 import Button from "../../../components/button/button";
 import { useTasks } from "../../../context/tasksContext";
@@ -32,6 +33,18 @@ function Tasks() {
     const [viewMode, setViewMode] = useState<ViewMode>('kanban');
     const [currentDate, setCurrentDate] = useState(new Date());
     const { tasks, loading, addTask, updateTask, deleteTask } = useTasks();
+    const [selectedTask, setSelectedTask] = useState<todo | null>(null);
+    const [detailsOpen, setDetailsOpen] = useState(false);
+
+    const openTaskDetails = (task: todo) => {
+        setSelectedTask(task);
+        setDetailsOpen(true);
+    };
+
+    const closeTaskDetails = () => {
+        setDetailsOpen(false);
+        setSelectedTask(null);
+    };
 
     const handleAddTask = async (task: Omit<todo, '$id' | 'id' | '$createdAt'>) => {
         await addTask(task);
@@ -75,6 +88,7 @@ function Tasks() {
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
+        <>
         <div className="flex flex-col gap-6 bg-white dark:bg-dark-bg md:rounded-[10px] p-6 py-10 h-full mb-4">
             <div className="flex justify-between gap-6 items-start flex-wrap">
                 <div>
@@ -92,7 +106,7 @@ function Tasks() {
                         <SearchBar />
                     </div>
                     {/* View Toggle */}
-                    <div className="flex items-center gap-1 bg-bg-gray-100 dark:bg-dark-bg-secondary p-1 rounded-lg border border-border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-1 bg-bg-gray-100 dark:bg-dark-bg-secondary p-1 rounded-lg border border-gray-500/[0.2]">
                         <button
                             onClick={() => setViewMode('kanban')}
                             className={`p-2 rounded-md transition-all ${
@@ -220,7 +234,7 @@ function Tasks() {
                     ) : (
                         <div className="flex flex-col gap-2">
                             {/* List Header - Hidden on mobile */}
-                            <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-gray-500 uppercase border-b border-border-gray-100 dark:border-gray-700">
+                            <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-gray-500 uppercase border-b border-gray-500/[0.2]">
                                 <div className="col-span-4">Task</div>
                                 <div className="col-span-2">Category</div>
                                 <div className="col-span-2">Status</div>
@@ -232,7 +246,10 @@ function Tasks() {
                             {tasks.map((task) => (
                                 <div 
                                     key={task.$id}
-                                    className="md:grid md:grid-cols-12 flex flex-col gap-4 px-4 py-3 border border-border-gray-100 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow bg-bg-gray-100 dark:bg-dark-bg-secondary/50"
+                                    onClick={() => openTaskDetails(task)}
+                                    role="button"
+                                    tabIndex={0}
+                                    className="md:grid md:grid-cols-12 flex flex-col gap-4 px-4 py-3 border border-gray-500/[0.2] rounded-lg hover:shadow-md transition-shadow bg-bg-gray-100 dark:bg-dark-bg-secondary/50 cursor-pointer"
                                 >
                                     {/* Mobile Layout */}
                                     <div className="md:col-span-4 flex flex-col gap-1">
@@ -299,7 +316,7 @@ function Tasks() {
             {viewMode === 'calendar' && (
                 <div className="flex flex-col gap-4">
                     {/* Calendar Header */}
-                    <div className="flex items-center justify-between p-4 bg-bg-gray-100 dark:bg-dark-bg-secondary/50 rounded-lg border border-border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center justify-between p-4 bg-bg-gray-100 dark:bg-dark-bg-secondary/50 rounded-lg border border-gray-500/[0.2]">
                         <button
                             onClick={() => changeMonth(-1)}
                             className="p-2 hover:bg-white dark:hover:bg-dark-bg rounded-lg transition-colors"
@@ -348,7 +365,7 @@ function Tasks() {
                                         className={`p-2 min-h-[100px] border rounded-lg ${
                                             isToday 
                                                 ? 'border-primary bg-primary/5 dark:bg-primary/10' 
-                                                : 'border-border-gray-100 dark:border-gray-700 bg-bg-gray-100 dark:bg-dark-bg-secondary/50'
+                                                : 'border-gray-500/[0.2] bg-bg-gray-100 dark:bg-dark-bg-secondary/50'
                                         } hover:shadow-md transition-shadow`}
                                     >
                                         <div className={`text-sm font-semibold mb-2 ${isToday ? 'text-primary' : ''}`}>
@@ -358,7 +375,10 @@ function Tasks() {
                                             {tasksForDay.slice(0, 3).map(task => (
                                                 <div
                                                     key={task.$id}
-                                                    className={`text-xs p-1 rounded truncate ${
+                                                    onClick={() => openTaskDetails(task)}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    className={`text-xs p-1 rounded truncate cursor-pointer ${
                                                         task.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                                                         task.status === 'in progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
                                                         task.status === 'suspended' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
@@ -384,6 +404,16 @@ function Tasks() {
                 </div>
             )}
         </div>
+
+        {/* Task Details Modal (for list/grid/calendar clicks) */}
+        {selectedTask && (
+            <TaskDetailsModal
+                isOpen={detailsOpen}
+                onClose={closeTaskDetails}
+                task={selectedTask}
+            />
+        )}
+        </>
     );
 }
 

@@ -1,9 +1,4 @@
-import { functions } from "../appwrite/appwrite";
-
-// Contract
-// input: { query: string; userEmail: string; limit?: number }
-// output: Array of tasks with fields used by UI; expects Appwrite $id and $createdAt/$updatedAt
-
+// Search via backend API (e.g., Vercel deployment)
 export type SearchTask = {
   $id: string;
   title: string;
@@ -18,32 +13,28 @@ export type SearchTask = {
 };
 
 export async function searchTasks(query: string, userEmail: string, limit: number = 10): Promise<SearchTask[]> {
-  const fnId = import.meta.env.VITE_APPWRITE_SEARCH_FUNCTION_ID;
-  if (!fnId) {
-    console.warn("Missing VITE_APPWRITE_SEARCH_FUNCTION_ID env var; search disabled");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  if (!backendUrl) {
+    console.warn("Missing VITE_BACKEND_URL env var; search disabled");
     return [];
   }
 
   try {
-    const payload = JSON.stringify({ query, userEmail, limit });
-    // IMPORTANT: run synchronously so we can read responseBody immediately
-    // Passing async=true enqueues the job and returns without a response body
-    const exec = await functions.createExecution(fnId, payload);
-
-  // Appwrite Function returns a JSON string in responseBody
-  const data = exec.responseBody || "";
-    if (!data) return [];
-
-    const parsed = JSON.parse(data);
-    if (Array.isArray(parsed?.results)) {
-      return parsed.results as SearchTask[];
+    const res = await fetch(`${backendUrl}/api/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, userEmail, limit })
+    });
+    if (!res.ok) {
+      console.error('searchTasks HTTP error', res.status, res.statusText);
+      return [];
     }
-    // Backward compat: if directly returns array
-    if (Array.isArray(parsed)) return parsed as SearchTask[];
-
+    const data = await res.json();
+    if (Array.isArray(data?.results)) return data.results as SearchTask[];
+    if (Array.isArray(data)) return data as SearchTask[];
     return [];
   } catch (err) {
-    console.error("searchTasks error", err);
+    console.error('searchTasks error', err);
     return [];
   }
 }

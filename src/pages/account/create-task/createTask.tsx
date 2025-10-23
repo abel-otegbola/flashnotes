@@ -10,7 +10,7 @@ import { todo } from "../../../interface/todo";
 import { useTasks } from "../../../context/tasksContext";
 import { useUser } from "../../../context/authContext";
 
-function Dashboard() {
+function CreateTask() {
   const [inputText, setInputText] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedTasks, setGeneratedTasks] = useState<todo[] | null>(null)
@@ -216,4 +216,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default CreateTask

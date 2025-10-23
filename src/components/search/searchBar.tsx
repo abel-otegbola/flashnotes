@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { searchTasks, SearchTask } from "../../services/search";
 import { useUser } from "../../context/authContext";
+import LoadingIcon from "../../assets/icons/loading";
 
 interface Props {
   onResults?: (results: SearchTask[], query: string) => void;
@@ -33,16 +34,20 @@ export default function SearchBar({ onResults, placeholder = "Search tasks..." }
     run();
   }, [debouncedQuery, user?.email]);
 
+  useEffect(() => {
+    console.log("Search results updated:", results, query);
+  }, [results, query]);
+
   return (
     <div className="relative w-full">
       <input
         className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg outline-none focus:ring-2 focus:ring-primary"
         placeholder={placeholder}
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {setQuery(e.target.value); console.log("Input changed:", e.target.value); }}
       />
       {loading && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">Searching…</div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400"><LoadingIcon className="animate-spin" /></div>
       )}
 
       {results.length > 0 && query && (

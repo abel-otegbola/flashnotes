@@ -39,7 +39,7 @@ export default function Waitlist() {
               initialValues={{ email: "", name: "", password: "" }}
               validationSchema={registerSchema}
               onSubmit={(values, { setSubmitting }) => {
-                joinWaitlist(values.name, values.email, values.password, callbackURL || "/dashboard");
+                joinWaitlist(values.name, values.email, values.password, callbackURL || "/account/dashboard");
                 setSubmitting(false);
               }}
             >

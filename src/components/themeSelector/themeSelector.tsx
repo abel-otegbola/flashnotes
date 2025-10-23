@@ -13,8 +13,8 @@ function ThemeSelector() {
     const [theme, setTheme] = useState(localStorage.theme || 'light')
 
     const themes: Themes = [
-        { id: 1, img: <Sun size={20} />, title: "light" },
-        { id: 2, img: <Moon size={20} />, title: "dark" },
+        { id: 1, img: <Sun size={16} />, title: "light" },
+        { id: 2, img: <Moon size={16} />, title: "dark" },
     ]
     
     useEffect(() => {

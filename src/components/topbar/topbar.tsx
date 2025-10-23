@@ -3,6 +3,7 @@ import LogoIcon from "../../assets/icons/logo";
 import Button from "../button/button";
 import { useState, useEffect } from "react";
 import ThemeSelector from "../themeSelector/themeSelector";
+import SearchBar from "../search/searchBar";
 
 function Topbar() {
     const pathname = useLocation().pathname;
@@ -81,8 +82,11 @@ function Topbar() {
                     <Link to="/contact" className="text-primary">Message us</Link>
                 </div>
             </ul>
-
+            {/* Right actions + search */}
             <div className="flex items-center gap-6">
+                <div className="hidden md:block w-64">
+                    <SearchBar placeholder="Search tasks..." />
+                </div>
                 <ThemeSelector />
                 <Button href="/auth/waitlist" className="sm:flex hidden">Join waitlist</Button> 
                 <button className="flex flex-col justify-center items-center gap-1 text-lg w-10 h-10 sm:hidden z-[50]" onClick={() => setOpen(!open)}>
