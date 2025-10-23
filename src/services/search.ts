@@ -20,7 +20,7 @@ export async function searchTasks(query: string, userEmail: string, limit: numbe
   }
 
   try {
-    const res = await fetch(`${backendUrl}/api/search`, {
+    const res = await fetch(`${backendUrl}api/search`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, userEmail, limit })
