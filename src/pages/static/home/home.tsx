@@ -1,39 +1,40 @@
 import { MedalRibbon, Microphone2, ChartSquare, Lightning, Magnet, CheckCircle, ArrowRight, UsersGroupRounded } from "@solar-icons/react"
 import HeroCheckIcon from "../../../assets/icons/heroCheck"
+import { useUser } from '../../../context/authContext'
 import BlurReveal from "../../../components/animations/blurReveal"
 import Button from "../../../components/button/button"
 
 function Home() {
+  const { user } = useUser();
   return (
     <main className="w-full dark:bg-dark dark:text-gray-100">
       {/* Hero Section */}
       <header className="flex justify-center items-center flex-col gap-6 sm:rounded-[40px] md:p-[40px] p-4 py-[80px] md:mx-[32px]">
         <p className="flex items-center gap-2 text-gray dark:text-gray-200 text-[12px] border border-gray-500/[0.2] bg-white/[0.1] dark:bg-white/[0.05] w-fit px-2 py-1 pr-4 rounded-full">
           <MedalRibbon weight="BoldDuotone" color="#FF7700" />
-          Powered by Google Gemini AI
+          Record. Transcribe. Act
         </p>
 
         <div>
           <BlurReveal preset="slide-left">
             <h1 className="md:text-[48px] text-[24px] font-bold w-fit text-center mx-auto leading-[120%]">
-              Turn Meetings into Action
+              Turn meetings into action
             </h1>
           </BlurReveal>
           <BlurReveal preset="slide-left">
             <h1 className="flex flex-wrap md:text-[48px] text-[24px] font-bold w-fit text-center gap-2 items-center mx-auto leading-[120%]">
-              in a <HeroCheckIcon width={60} className="w-[20px]" /> ⚡Flash 
+              Instantly⚡
             </h1>
           </BlurReveal>
         </div>
 
         <BlurReveal preset="slide-left">
           <p className="text-gray dark:text-gray-300 text-center mx-auto md:w-[65%] w-full md:text-[18px]">
-            Record meetings, speak your thoughts, and watch AI transform them into actionable tasks. 
-            Identify bottlenecks, optimize workflows, and boost team productivity—all automatically.
+            Stop wasting time on manual meeting follow-ups. Record meetings or speak naturally — our AI converts conversations into prioritized, assigned tasks so teams spend less time tracking work and more time doing high-quality work.
           </p>
         </BlurReveal>
         <div className="flex gap-4 flex-wrap justify-center">
-          <Button href="/auth/waitlist">Start Free Trial</Button>
+          <Button href="/auth/signup">Start Free Trial</Button>
           <button className="px-6 py-3 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors duration-300 font-medium">
             Watch Demo
           </button>
@@ -42,27 +43,28 @@ function Home() {
         <img src="/Tasks - create.png" width={729} height={529} alt="hero" className="shadow-2xl rounded-lg" />
         
         <div className="py-4 flex flex-col items-center gap-4 md:w-[55%] text-center mb-12">
-          <BlurReveal preset="slide-right">
-            <h2 className="md:text-[24px] text-[18px] font-medium">Join 500+ Teams Saving 10+ Hours/Week</h2>
+          <BlurReveal preset="zoom">
+            <h2 className="md:text-[24px] text-[18px] font-medium">Join 500+ teams saving 10+ hours/week of quality time</h2>
           </BlurReveal>
-          <BlurReveal preset="slide-right">
+          <BlurReveal preset="zoom">
             <p className="dark:text-gray-300">Get early access, influence features, and unlock exclusive perks for early adopters</p>
           </BlurReveal>
           <img src="/users.png" alt="users" width={220} height={36} className="" />
-          <Button href="/auth/waitlist">Join waitlist — It's Free</Button>
+          {/* Show Sign up when not authenticated, otherwise show user initial circle */}
+          <Button href="/auth/signup">Get Started</Button>
         </div>
       </header>
 
       {/* Features Section */}
       <section id="features" className="md:p-[80px] p-4 py-[60px] flex flex-col gap-12">
         <div className="text-center max-w-3xl mx-auto">
-          <BlurReveal preset="slide-right">
+          <BlurReveal preset="zoom">
             <span className="text-primary uppercase font-semibold tracking-wide text-[14px]">Features</span>
             <h2 className="md:text-[40px] text-[28px] font-bold mt-4 mb-6">
-              Everything You Need to Work Smarter
+              Automate task follow-ups and reclaim quality time
             </h2>
             <p className="text-gray dark:text-gray-300 md:text-[18px]">
-              From voice to action in seconds. AI-powered intelligence that actually understands your workflow.
+              Convert voice into prioritized action in seconds—automate task capture, assignment, and deadlines so your team can focus on impactful work instead of admin.
             </p>
           </BlurReveal>
         </div>
@@ -106,7 +108,7 @@ function Home() {
               benefit: "Complete 25% more tasks per sprint"
             }
           ].map((feature, index) => (
-            <BlurReveal key={index} preset="slide-right">
+            <BlurReveal key={index} preset="zoom">
               <div className="p-6 rounded-2xl border border-border-gray-100 dark:border-gray-700 bg-bg-gray-100 dark:bg-dark-bg-secondary/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-[20px] font-bold mb-3">{feature.title}</h3>
@@ -122,10 +124,10 @@ function Home() {
       <section id="how-it-works" className="md:p-[80px] p-4 py-[60px] bg-bg-gray-100 dark:bg-dark-bg/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <BlurReveal preset="slide-right">
-              <span className="text-primary uppercase font-semibold tracking-wide text-[14px]">How It Works</span>
-              <h2 className="md:text-[40px] text-[28px] font-bold mt-4 mb-6">
-                From Chaos to Clarity in 3 Simple Steps
+            <BlurReveal preset="zoom">
+              <span className="uppercase font-bold tracking-wide text-[14px] px-6 py-3 rounded-lg border border-gray-100 shadow-sm">How It Works</span>
+              <h2 className="md:text-[40px] text-[28px] font-semibold mt-4 mb-6">
+                Three simple steps to move from chaotic meetings to focused action.
               </h2>
               <p className="text-gray dark:text-gray-300 md:text-[18px]">
                 No complex setup. No learning curve. Just effortless productivity.
@@ -154,10 +156,10 @@ function Home() {
                 image: "placeholder"
               }
             ].map((step, index) => (
-              <BlurReveal key={index} preset="slide-up">
+              <BlurReveal key={index} preset="zoom">
                 <div className="flex flex-col gap-6">
                   <div className="text-primary font-bold text-[48px] opacity-20">{step.step}</div>
-                  <div className="w-full h-[200px] bg-gradient-to-br from-primary/20 to-fuchsia-400/20 rounded-xl flex items-center justify-center border border-primary/30">
+                  <div className="w-full h-[200px] rounded-xl flex items-center justify-center border border-primary/30">
                     <span className="text-gray-400 text-[14px]">Visual: {step.title}</span>
                   </div>
                   <h3 className="text-[24px] font-bold">{step.title}</h3>
@@ -173,7 +175,7 @@ function Home() {
       <section id="pricing" className="md:p-[80px] p-4 py-[60px]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <BlurReveal preset="slide-right">
+            <BlurReveal preset="zoom">
               <span className="text-primary uppercase font-semibold tracking-wide text-[14px]">Pricing</span>
               <h2 className="md:text-[40px] text-[28px] font-bold mt-4 mb-6">
                 Simple, Transparent Pricing
@@ -234,7 +236,7 @@ function Home() {
                 popular: false
               }
             ].map((plan, index) => (
-              <BlurReveal key={index} preset="slide-right">
+              <BlurReveal key={index} preset="zoom">
                 <div className={`p-8 rounded-2xl border ${plan.popular ? 'border-primary shadow-2xl scale-105' : 'border-border-gray-100 dark:border-gray-700'} bg-white dark:bg-dark-bg-secondary/50 relative`}>
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1 rounded-full text-[12px] font-semibold">
@@ -255,7 +257,7 @@ function Home() {
                       </li>
                     ))}
                   </ul>
-                  <Button href="/auth/waitlist" className={`w-full justify-center ${plan.popular ? '' : 'bg-transparent border border-primary text-primary hover:bg-primary hover:text-white'}`}>
+                  <Button href="/auth/signup" variant={plan.name === "Professional" ? "primary" : "secondary"} className={`w-full justify-center ${plan.popular ? '' : 'bg-transparent border border-primary text-primary hover:bg-primary hover:text-white'}`}>
                     {plan.cta}
                   </Button>
                 </div>
@@ -265,60 +267,40 @@ function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="md:p-[80px] p-4 py-[60px] bg-bg-gray-100 dark:bg-dark-bg/50">
+      {/* FAQs Section (replaces testimonials) */}
+      <section id="faqs" className="md:p-[80px] p-4 py-[60px]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <BlurReveal preset="slide-right">
-              <span className="text-primary uppercase font-semibold tracking-wide text-[14px]">Testimonials</span>
-              <h2 className="md:text-[40px] text-[28px] font-bold mt-4 mb-6">
-                Loved by Teams Worldwide
-              </h2>
-              <p className="text-gray dark:text-gray-300 md:text-[18px]">
-                See how Flashtasks is transforming the way teams work
-              </p>
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <BlurReveal preset="zoom">
+              <span className="text-primary uppercase font-semibold tracking-wide text-[14px]">FAQs</span>
+              <h2 className="md:text-[40px] text-[28px] font-bold mt-4 mb-6">Frequently asked questions</h2>
+              <p className="text-gray dark:text-gray-300 md:text-[18px]">Answers to common questions about how Flashtasks saves teams time by automating task capture and follow-up.</p>
             </BlurReveal>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {[
               {
-                quote: "Flashtasks cut our meeting follow-up time by 80%. We now spend more time doing and less time documenting.",
-                author: "Sarah Chen",
-                role: "Product Manager",
-                company: "TechFlow Inc.",
-                avatar: "SC"
+                q: 'How does Flashtasks save my team time?',
+                a: 'Our AI converts meeting audio and voice notes into prioritized, assigned tasks with deadlines — eliminating manual follow-ups and reducing admin work so your team can focus on higher-value work.'
               },
               {
-                quote: "The workflow analytics revealed bottlenecks we didn't even know existed. We've reduced our sprint cycle by 2 days.",
-                author: "Marcus Johnson",
-                role: "Engineering Lead",
-                company: "DevCore",
-                avatar: "MJ"
+                q: 'Is my meeting data secure?',
+                a: 'Yes — we follow industry best practices for data security and encryption. You can also control access through organization and team permissions.'
               },
               {
-                quote: "Being able to search through months of meeting recordings instantly is a game-changer. Nothing gets lost anymore.",
-                author: "Emily Rodriguez",
-                role: "Operations Director",
-                company: "Scalable Systems",
-                avatar: "ER"
+                q: 'Which integrations are supported?',
+                a: 'We index tasks for fast search and provide integrations to common task and collaboration tools. Contact us for custom integration options.'
+              },
+              {
+                q: 'How accurate is the AI at extracting tasks?',
+                a: 'Our AI is tuned for action-item detection and improves over time. You can edit or reassign any generated task before it goes into your workflows.'
               }
-            ].map((testimonial, index) => (
-              <BlurReveal key={index} preset="slide-up">
-                <div className="p-6 rounded-2xl bg-white dark:bg-dark-bg-secondary/50 border border-border-gray-100 dark:border-gray-700">
-                  <div className="mb-4 text-primary text-[48px] leading-none">"</div>
-                  <p className="text-gray dark:text-gray-300 mb-6 italic">{testimonial.quote}</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-fuchsia-400 flex items-center justify-center text-white font-bold">
-                      {testimonial.avatar}
-                    </div>
-                    <div>
-                      <div className="font-bold">{testimonial.author}</div>
-                      <div className="text-[14px] text-gray dark:text-gray-400">{testimonial.role}, {testimonial.company}</div>
-                    </div>
-                  </div>
-                </div>
-              </BlurReveal>
+            ].map((faq, idx) => (
+              <div key={idx} className="p-6 bg-white dark:bg-dark-bg-secondary/50 rounded-2xl border border-border-gray-100 dark:border-gray-700">
+                <div className="font-semibold mb-2">{faq.q}</div>
+                <div className="text-gray dark:text-gray-300 text-sm">{faq.a}</div>
+              </div>
             ))}
           </div>
         </div>
@@ -326,16 +308,13 @@ function Home() {
 
       {/* Final CTA Section */}
       <section className="md:p-[80px] p-4 py-[60px]">
-        <BlurReveal preset="slide-right">
-          <div className="max-w-4xl mx-auto text-center bg-gradient-to-br from-primary to-fuchsia-400 rounded-3xl p-12 text-white">
-            <h2 className="md:text-[40px] text-[28px] font-bold mb-6">
-              Ready to Transform Your Workflow?
+        <BlurReveal preset="zoom">
+          <div className="max-w-4xl mx-auto text-center bg-gradient-to-br from-dark to-dark-bg rounded-3xl p-12 text-white">
+            <h2 className="md:text-[28px] text-[16px] font-bold mb-6">
+              Reclaim your team's time by automating meeting follow-ups
             </h2>
-            <p className="md:text-[20px] text-[16px] mb-8 opacity-90">
-              Join thousands of teams who've already made the switch. Start your free trial today—no credit card required.
-            </p>
             <div className="flex gap-4 flex-wrap justify-center">
-              <Button href="/auth/waitlist" className="bg-white text-primary hover:bg-gray-100">
+              <Button href="/auth/signup" className="">
                 Get Started Free <ArrowRight className="ml-2" />
               </Button>
               <button className="px-6 py-3 rounded-lg border-2 border-white text-white hover:bg-white/10 transition-colors duration-300 font-medium">

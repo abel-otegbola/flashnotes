@@ -4,12 +4,27 @@ import Button from "../button/button";
 import { useState, useEffect } from "react";
 import ThemeSelector from "../themeSelector/themeSelector";
 import SearchBar from "../search/searchBar";
+import { useUser } from "../../context/authContext";
 
 function Topbar() {
     const pathname = useLocation().pathname;
     const [open, setOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const [activeSection, setActiveSection] = useState("")
+    const { user } = useUser();
+
+    const AuthCTA = () => {
+        if (user && (user as any).name) {
+        const initial = ((user as any).name || (user as any).email || 'U')[0].toUpperCase();
+        return (
+            <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">{initial}</div>
+        );
+        }
+
+        return (
+        <Button href="/auth/signup">Sign up</Button>
+        );
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -83,12 +98,9 @@ function Topbar() {
                 </div>
             </ul>
             {/* Right actions + search */}
-            <div className="flex items-center gap-6">
-                <div className="hidden md:block w-64">
-                    <SearchBar placeholder="Search tasks..." />
-                </div>
+            <div className="flex items-center justify-end gap-6 sm:w-[13%]">
                 <ThemeSelector />
-                <Button href="/auth/waitlist" className="sm:flex hidden">Join waitlist</Button> 
+                <AuthCTA />
                 <button className="flex flex-col justify-center items-center gap-1 text-lg w-10 h-10 sm:hidden z-[50]" onClick={() => setOpen(!open)}>
                     <span className={`w-[8px] h-[2px] py-[1px] px-[10px] duration-500 transition-all dark:bg-white bg-dark rounded-[2px] ${open ? "rotate-[45deg] translate-y-[4.5px]" : "rotate-[0deg]"}`}></span>
                     <span className={`duration-500 transition-all dark:bg-white bg-dark rounded-[2px] ${open ? "py-[0px] w-[0px] h-[0px] translate-x-[-12px]" : "translate-x-[4px] py-[1px] px-[4px] w-[8px] h-[2px]"}`}></span>

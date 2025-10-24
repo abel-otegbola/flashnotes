@@ -5,6 +5,7 @@ import { useUser } from "../../../context/authContext";
 import Calendar from "react-calendar";
 import { ArrowLeft, ArrowRight, CalendarDate } from "@solar-icons/react";
 import TasksList from "../../../components/ui/tasksList";
+import TasksPerDay from "../../../components/charts/TasksPerDay";
 
 function Dashboard() {
   const { tasks, loading, getTasks } = useTasks();
@@ -70,6 +71,11 @@ function Dashboard() {
             ))}
           </div>
         )}
+      </div>
+      
+      {/* Tasks per day chart */}
+      <div>
+        <TasksPerDay days={14} />
       </div>
     </div>
 
