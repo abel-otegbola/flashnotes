@@ -43,10 +43,22 @@ export const OrganizationProvider = ({ children }: { children: ReactNode }) => {
           [Query.limit(100)]
         );
 
+        // Try to fetch full documents for nested fields (members/teams) — listDocuments may omit nested shapes in some setups
+        const docsRaw = res.documents || [];
+        const fullDocs = await Promise.all(docsRaw.map(async (d: any) => {
+          try {
+            return await databases.getDocument(DATABASE_ID, ORG_COLLECTION_ID, d.$id);
+          } catch (e) {
+            // fallback to the list document if getDocument fails
+            return d;
+          }
+        }));
+
         // Map Appwrite documents to our Organization shape (assume stored fields align)
-        const docs = res.documents.map((d: any) => ({
+        const docs = fullDocs.map((d: any) => ({
           $id: d.$id,
           name: d.name,
+          ownerEmail: d.ownerEmail || d.owner?.email,
           slug: d.slug,
           description: d.description,
           members: d.members || [],
@@ -54,8 +66,18 @@ export const OrganizationProvider = ({ children }: { children: ReactNode }) => {
           createdAt: d.$createdAt,
         } as Organization));
 
-        // Filter organizations where user is a member (by email or $id)
-        const filtered = docs.filter(o => (o.members || []).some((m: any) => m.email === (user as any).email || m.$id === (user as any).$id));
+        // Filter organizations where user is a member (by email or $id) or is the ownerEmail
+        const filtered = docs.filter(o => {
+          const userEmail = (user as any)?.email;
+          const userId = (user as any)?.$id || (user as any)?.userId;
+          // check ownerEmail first
+          if (o.ownerEmail && userEmail && o.ownerEmail === userEmail) return true;
+          // then check members array
+          return (o.members || []).some((m: any) => {
+            if (!m) return false;
+            return (userEmail && m.email === userEmail) || (userId && (m.$id === userId || m.$id === userId));
+          });
+        });
         setOrganizations(filtered);
         if (filtered.length > 0) setCurrentOrg(filtered[0]);
       } catch (err) {
@@ -103,16 +125,25 @@ export const OrganizationProvider = ({ children }: { children: ReactNode }) => {
         teams
       };
 
-      const res = await databases.createDocument(DATABASE_ID, ORG_COLLECTION_ID, ID.unique(), orgData);
+  const res = await databases.createDocument(DATABASE_ID, ORG_COLLECTION_ID, ID.unique(), orgData);
+
+      // fetch authoritative document to ensure nested fields (members/teams) are present
+      let full: any = res;
+      try {
+        full = await databases.getDocument(DATABASE_ID, ORG_COLLECTION_ID, res.$id);
+      } catch (e) {
+        // ignore: fall back to create response
+      }
+
       const newOrg: Organization = {
-        $id: res.$id,
-        name: res.name,
-        ownerEmail: res.ownerEmail || (user as any)?.email,
-        slug: res.slug,
-        description: res.description,
-        members: res.members || [],
-        teams: res.teams || [],
-        createdAt: res.$createdAt,
+        $id: full.$id,
+        name: full.name,
+        ownerEmail: full.ownerEmail || (user as any)?.email,
+        slug: full.slug,
+        description: full.description,
+        members: full.members || [],
+        teams: full.teams || [],
+        createdAt: full.$createdAt,
       };
 
       setOrganizations(prev => [newOrg, ...prev]);

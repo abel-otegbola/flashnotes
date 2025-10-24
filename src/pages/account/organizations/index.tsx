@@ -24,23 +24,23 @@ export default function OrganizationsPage() {
         <h1 className="text-2xl font-semibold">Organizations</h1>
         <Button onClick={() => setShowCreate(true)} size="medium">Create Organization</Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white dark:bg-dark-bg border border-gray-500/[0.1] dark:border-gray-500/[0.2] rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-3 h-full gap-4 p-4 bg-white dark:bg-dark-bg border border-gray-500/[0.1] dark:border-gray-500/[0.2] rounded-lg">
         <div className="col-span-1">
           <h3 className="mb-2 text-sm text-gray-400">Your organizations</h3>
           <div className="flex flex-col gap-2">
             {organizations.length === 0 && <div className="text-gray-500">No organizations yet</div>}
             {organizations.map(org => (
-              <div key={org.$id} className={`p-3 rounded-lg border ${currentOrg?.$id === org.$id ? 'border-primary bg-bg-gray-100' : 'border-border-gray-100'}`}>
-                <div className="flex items-center justify-between">
-                  <div>
+              <button 
+                key={org.$id} 
+                className={`p-3 text-start flex items-center gap-2 rounded-lg border ${currentOrg?.$id === org.$id ? 'border-primary bg-bg-gray-100' : 'border-border-gray-100'}`}
+                onClick={() => selectOrganization(org.$id)} 
+              >
+                <span className="w-12 h-12 flex items-center justify-center bg-primary/10 text-primary rounded-full font-bold">{org.name.charAt(0).toUpperCase()}</span>
+                <div className="flex flex-col gap-2 text-start justify-start">
                     <div className="font-medium">{org.name}</div>
                     <div className="text-xs text-gray-500">{org.description}</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button onClick={() => selectOrganization(org.$id)} variant="secondary">Select</Button>
-                  </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

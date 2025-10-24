@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { AddCircle, Widget4, MenuDots, List, Calendar as CalendarIcon } from "@solar-icons/react";
+import { AddCircle, Widget4, MenuDots, List, Calendar as CalendarIcon, Widget } from "@solar-icons/react";
 import TodoCard from "../../../components/cards/todoCard";
 import AddTaskModal from "../../../components/modals/addTaskModal";
 import TaskDetailsModal from "../../../components/modals/taskDetailsModal";
@@ -31,7 +31,7 @@ type ViewMode = 'kanban' | 'list' | 'grid' | 'calendar';
 function Tasks() {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
     const [showModal, setShowModal] = useState(false);
-    const [viewMode, setViewMode] = useState<ViewMode>('kanban');
+    const [viewMode, setViewMode] = useState<ViewMode>('list');
     const [currentDate, setCurrentDate] = useState(new Date());
     const { tasks, loading, addTask, updateTask, deleteTask, getTasks } = useTasks();
     const [selectedTask, setSelectedTask] = useState<todo | null>(null);
@@ -112,17 +112,6 @@ function Tasks() {
                     {/* View Toggle */}
                     <div className="flex items-center gap-1 bg-bg-gray-100 dark:bg-dark-bg-secondary p-1 rounded-lg border border-gray-500/[0.2]">
                         <button
-                            onClick={() => setViewMode('kanban')}
-                            className={`p-2 rounded-md transition-all ${
-                                viewMode === 'kanban' 
-                                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm' 
-                                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
-                            }`}
-                            title="Kanban View"
-                        >
-                            <Widget4 size={20} />
-                        </button>
-                        <button
                             onClick={() => setViewMode('list')}
                             className={`p-2 rounded-md transition-all ${
                                 viewMode === 'list' 
@@ -134,6 +123,17 @@ function Tasks() {
                             <List size={20} />
                         </button>
                         <button
+                            onClick={() => setViewMode('kanban')}
+                            className={`p-2 rounded-md transition-all ${
+                                viewMode === 'kanban' 
+                                    ? 'bg-white dark:bg-dark-bg text-primary shadow-sm' 
+                                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                            }`}
+                            title="Kanban View"
+                        >
+                            <Widget4 size={20} />
+                        </button>
+                        <button
                             onClick={() => setViewMode('grid')}
                             className={`p-2 rounded-md transition-all ${
                                 viewMode === 'grid' 
@@ -142,7 +142,7 @@ function Tasks() {
                             }`}
                             title="Grid View"
                         >
-                            <MenuDots size={20} />
+                            <Widget size={20} />
                         </button>
                         <button
                             onClick={() => setViewMode('calendar')}
