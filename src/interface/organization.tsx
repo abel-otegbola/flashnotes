@@ -15,6 +15,7 @@ export interface Team {
 export interface Organization {
   $id: string;
   name: string;
+  ownerEmail?: string;
   slug?: string;
   description?: string;
   members?: OrgMember[];

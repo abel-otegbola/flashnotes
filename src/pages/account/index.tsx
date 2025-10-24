@@ -12,6 +12,7 @@ import Tasks from "./tasks/page";
 import Organizations from "./organizations";
 import SearchBar from "../../components/search/searchBar";
 import CreateTask from "./create-task/createTask";
+import SettingsPage from "./settings";
 
 function AccountPages() {
     const { user } = useUser();
@@ -57,6 +58,7 @@ function AccountPages() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />} />
                 <Route path="/organizations" element={<Organizations />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/tasks/new" element={<CreateTask />} />
             </Routes>
         </div>

@@ -70,19 +70,33 @@ export const OrganizationProvider = ({ children }: { children: ReactNode }) => {
   const createOrganization = async (payload: CreateOrganizationPayload) => {
     setLoading(true);
     try {
-      const members = payload.members && payload.members.length > 0 ? payload.members.map(m => ({ $id: m.$id || ID.unique(), name: m.name, email: m.email, role: m.role })) : [
-        {
-          $id: (user as any)?.$id,
-          name: (user as any)?.name || (user as any)?.fullname || '',
-          email: (user as any)?.email,
-          role: 'owner'
+      // Ensure creator is always included as owner in members
+      const ownerMember: OrgMember = {
+        $id: (user as any)?.$id || ID.unique(),
+        name: (user as any)?.name || (user as any)?.fullname || '',
+        email: (user as any)?.email,
+        role: 'owner'
+      };
+
+      let members: OrgMember[] = [];
+      if (payload.members && payload.members.length > 0) {
+        members = payload.members.map(m => ({ $id: m.$id || ID.unique(), name: m.name, email: m.email, role: m.role }));
+        // If owner not present in provided members, add them
+        const hasOwner = members.some(m => m.email === ownerMember.email || m.$id === ownerMember.$id);
+        if (!hasOwner) members.unshift(ownerMember);
+        else {
+          // make sure the owner member has role 'owner'
+          members = members.map(m => (m.email === ownerMember.email || m.$id === ownerMember.$id) ? { ...m, role: 'owner' } : m);
         }
-      ];
+      } else {
+        members = [ownerMember];
+      }
 
       const teams = payload.teams && payload.teams.length > 0 ? payload.teams.map(t => ({ $id: ID.unique(), name: t.name, members: t.members || [] })) : [];
 
       const orgData: any = {
         name: payload.name,
+        ownerEmail: (user as any)?.email,
         slug: payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         description: payload.description || '',
         members,
@@ -93,6 +107,7 @@ export const OrganizationProvider = ({ children }: { children: ReactNode }) => {
       const newOrg: Organization = {
         $id: res.$id,
         name: res.name,
+        ownerEmail: res.ownerEmail || (user as any)?.email,
         slug: res.slug,
         description: res.description,
         members: res.members || [],

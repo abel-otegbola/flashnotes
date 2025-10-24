@@ -30,8 +30,7 @@ function Sidebar() {
     const generalLinks: Link[] = [
         { id: 0, label: "Dashboard", icon: <Home size={16} />, link: "/account/dashboard" },
         { id: 1, label: "Tasks", icon: <Server size={16} />, link: "/account/tasks" },
-        { id: 2, label: "Calendar", icon: <Calendar size={16} />, link: "/account/calendar" },
-        { id: 3, label: "Organizations", icon: <UsersGroupTwoRounded size={16} />, link: "/account/organizations" },
+        { id: 2, label: "Organizations", icon: <UsersGroupTwoRounded size={16} />, link: "/account/organizations" },
     ]
     
     const otherLinks: Link[] = [
