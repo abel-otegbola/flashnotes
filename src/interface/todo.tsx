@@ -9,6 +9,8 @@ export interface todo {
   userEmail: string;
   assignee?: string;
   invites?: string[];
+  organizationId?: string;
+  teamId?: string;
   status: 'pending' | 'upcoming' | 'in progress' | 'completed' | 'suspended';
   priority?: 'low' | 'medium' | 'high';
   dueDate?: string;

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { todo } from "../../interface/todo";
+import { useOrganizations } from '../../context/organizationContext';
 import { CloseCircle, Calendar, User, Flag, TrashBinTrash } from "@solar-icons/react";
 import Button from "../button/button";
 import { useUser } from "../../context/authContext";
@@ -24,7 +25,6 @@ export default function AddTaskModal({
   task = null,
   mode = 'add'
 }: AddTaskModalProps) {
-  const { user } = useUser()
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -32,6 +32,8 @@ export default function AddTaskModal({
     category: "",
     assignee: "",
     invites: "",
+    organizationId: "",
+    teamId: "",
     status: "upcoming",
     priority: "medium",
     dueDate: "",
@@ -50,6 +52,8 @@ export default function AddTaskModal({
         category: task.category || "",
         assignee: task.assignee || "",
         invites: task.invites?.join(", ") || "",
+        organizationId: (task as any).organizationId || "",
+        teamId: (task as any).teamId || "",
         status: task.status || "upcoming",
         priority: task.priority || "medium",
         dueDate: task.dueDate || "",
@@ -64,6 +68,8 @@ export default function AddTaskModal({
         category: "",
         assignee: "",
         invites: "",
+        organizationId: "",
+        teamId: "",
         status: "upcoming",
         priority: "medium",
         dueDate: "",
@@ -78,6 +84,26 @@ export default function AddTaskModal({
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
+  const { organizations, currentOrg } = useOrganizations();
+  const { user } = useUser();
+
+  const getMemberRole = (org: any) => {
+    if (!org || !user) return undefined;
+    const m = (org.members || []).find((mm: any) => mm.$id === user.$id || mm.email === user.email);
+    return m?.role as 'owner' | 'admin' | 'member' | undefined;
+  }
+
+  // Determine if current user is owner/admin for the currently selected organization
+  const selectedOrg = organizations?.find(o => o.$id === form.organizationId) || currentOrg;
+  const selectedOrgRole = selectedOrg ? getMemberRole(selectedOrg) : undefined;
+
+  // When currentOrg exists and we're adding a new task, default to that org
+  useEffect(() => {
+    if (!task && mode === 'add' && currentOrg) {
+      setForm(prev => ({ ...prev, organizationId: currentOrg.$id }));
+    }
+  }, [currentOrg, mode, task]);
 
   const handleAddAssignee = () => {
     if (!newAssignee.trim()) return;
@@ -124,6 +150,8 @@ export default function AddTaskModal({
         category: form.category,
         assignee: form.assignee,
         invites: assigneesList,
+        organizationId: form.organizationId || undefined,
+        teamId: form.teamId || undefined,
         status: form.status as todo["status"],
         priority: form.priority as todo["priority"],
         dueDate: form.dueDate,
@@ -326,6 +354,51 @@ export default function AddTaskModal({
                 <p className="text-gray-500 dark:text-gray-400 text-sm italic">No additional assignees</p>
               )}
             </div>
+          </div>
+
+          {/* Organization / Team assignment */}
+          <div className="p-4 rounded-lg bg-gray-100 dark:bg-dark-bg-secondary">
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Organization / Team (optional)</label>
+
+            <div className="mb-3">
+                {/* Show organization selector only if user is owner/admin of any org (can choose), otherwise if currentOrg exists show it as readonly */}
+                {organizations?.some((o: any) => getMemberRole(o) === 'owner' || getMemberRole(o) === 'admin') ? (
+                  <select
+                    name="organizationId"
+                    value={form.organizationId}
+                    onChange={(e) => {
+                      handleChange(e);
+                      // reset team when organization changes
+                      setForm(prev => ({ ...prev, teamId: '' }));
+                    }}
+                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg outline-none"
+                  >
+                    <option value="">Personal</option>
+                    {organizations && organizations.map(org => (
+                      <option key={org.$id} value={org.$id}>{org.name}</option>
+                    ))}
+                  </select>
+                ) : (
+                  // show currentOrg name/read-only when available for members
+                  <input readOnly value={selectedOrg?.name || 'Personal'} className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-dark-bg outline-none" />
+                )}
+              </div>
+
+              <div>
+                {/* Team selector: only enabled for owner/admin; members see disabled selector if org exists */}
+                <select
+                  name="teamId"
+                  value={form.teamId}
+                  onChange={handleChange}
+                  className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg outline-none"
+                  disabled={!form.organizationId || !(selectedOrgRole === 'owner' || selectedOrgRole === 'admin')}
+                >
+                  <option value="">No team</option>
+                  {selectedOrg?.teams?.map((t: any) => (
+                    <option key={t.$id} value={t.$id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
           </div>
 
           {/* Metadata for Edit Mode */}

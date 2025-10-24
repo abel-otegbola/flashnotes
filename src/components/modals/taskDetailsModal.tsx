@@ -4,6 +4,8 @@ import { todo } from "../../interface/todo";
 import { CloseCircle, Calendar, User, Flag, TrashBinTrash, PenNewSquare } from "@solar-icons/react";
 import Button from "../button/button";
 import { useTasks } from "../../context/tasksContext";
+import { useOrganizations } from '../../context/organizationContext';
+import { useUser } from '../../context/authContext';
 
 interface TaskDetailsModalProps {
   isOpen: boolean;
@@ -16,6 +18,14 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
   const [editedTask, setEditedTask] = useState(task);
   const [newAssignee, setNewAssignee] = useState("");
   const { updateTask, deleteTask } = useTasks();
+  const { organizations, currentOrg } = useOrganizations();
+  const { user } = useUser();
+
+  // determine user's role in the task's organization (if any)
+  const taskOrg = organizations.find(o => o.$id === (task as any).organizationId);
+  const taskTeam = taskOrg?.teams?.find((t: any) => t.$id === (task as any).teamId);
+  const member = taskOrg?.members?.find((m: any) => m.$id === (user as any)?.$id || m.email === (user as any)?.email);
+  const userRole: 'owner' | 'admin' | 'member' | undefined = (member as any)?.role;
 
   if (!isOpen) return null;
 
@@ -223,6 +233,48 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Organization / Team Display */}
+          <div className="p-4 rounded-lg bg-gray-100 dark:bg-dark-bg-secondary">
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Organization</label>
+            <div>
+              {taskOrg ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{taskOrg.name}</span>
+                  {taskTeam && <span className="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700">{taskTeam.name}</span>}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500">Personal / No organization</div>
+              )}
+            </div>
+
+            {/* When editing, allow changing org/team only for owners/admins */}
+            {isEditing && userRole && (userRole === 'owner' || userRole === 'admin') && (
+              <div className="mt-3 grid grid-cols-1 gap-2">
+                <select
+                  value={(editedTask as any).organizationId || ''}
+                  onChange={(e) => setEditedTask({ ...editedTask, organizationId: e.target.value })}
+                  className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg outline-none"
+                >
+                  <option value="">Personal</option>
+                  {organizations.map(org => (
+                    <option key={org.$id} value={org.$id}>{org.name}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={(editedTask as any).teamId || ''}
+                  onChange={(e) => setEditedTask({ ...editedTask, teamId: e.target.value })}
+                  className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg outline-none"
+                >
+                  <option value="">No team</option>
+                  {organizations.find(o => o.$id === (editedTask as any).organizationId)?.teams?.map((t: any) => (
+                    <option key={t.$id} value={t.$id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Assignees Section */}

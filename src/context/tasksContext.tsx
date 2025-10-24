@@ -4,6 +4,7 @@ import { ID, Query } from "appwrite";
 import { databases } from "../appwrite/appwrite";
 import { todo } from '../interface/todo';
 import toast from "react-hot-toast";
+import { indexTask } from '../services/indexer';
 import { useUser } from './authContext';
 import { User } from '../interface/auth';
 
@@ -83,6 +84,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
             if (task.dueDate) taskData.dueDate = task.dueDate;
             if (task.assignee) taskData.assignee = task.assignee;
             if (task.invites) taskData.invites = task.invites;
+            if ((task as any).organizationId) taskData.organizationId = (task as any).organizationId;
+            if ((task as any).teamId) taskData.teamId = (task as any).teamId;
 
             const response = await databases.createDocument(
                 DATABASE_ID,
@@ -94,6 +97,9 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
             const newTask = response as unknown as todo;
             setTasks(prev => [newTask, ...prev]);
             toast.success('Task created successfully!');
+
+                                    // Index the task in Elasticsearch via backend endpoint
+                                    await indexTask('create', newTask);
             return newTask;
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to create task';
@@ -131,6 +137,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                 if (task.dueDate) taskData.dueDate = task.dueDate;
                 if (task.assignee) taskData.assignee = task.assignee;
                 if (task.invites) taskData.invites = task.invites;
+                if ((task as any).organizationId) taskData.organizationId = (task as any).organizationId;
+                if ((task as any).teamId) taskData.teamId = (task as any).teamId;
 
                 const response = await databases.createDocument(
                     DATABASE_ID,
@@ -140,6 +148,8 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
                 );
                 
                 createdTasks.push(response as unknown as todo);
+                                                // index each created task
+                                                await indexTask('create', response);
             }
             
             setTasks(prev => [...createdTasks, ...prev]);
@@ -175,6 +185,9 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
             const updatedTask = response as unknown as todo;
             setTasks(prev => prev.map(task => task.$id === taskId ? updatedTask : task));
             toast.success('Task updated successfully!');
+
+                                    // update index
+                                    await indexTask('update', updatedTask);
             return updatedTask;
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to update task';
@@ -201,6 +214,9 @@ const TasksProvider = ({ children }: { children: ReactNode}) => {
 
             setTasks(prev => prev.filter(task => task.$id !== taskId));
             toast.success('Task deleted successfully!');
+
+                                    // delete from index
+                                    await indexTask('delete', taskId);
             return true;
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to delete task';

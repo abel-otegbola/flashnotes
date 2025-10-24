@@ -3,6 +3,8 @@ import { searchTasks, SearchTask } from "../../services/search";
 import { useUser } from "../../context/authContext";
 import LoadingIcon from "../../assets/icons/loading";
 import { Magnifer } from "@solar-icons/react";
+import TaskDetailsModal from "../modals/taskDetailsModal";
+import { todo } from "../../interface/todo";
 
 interface Props {
   onResults?: (results: SearchTask[], query: string) => void;
@@ -14,6 +16,7 @@ export default function SearchBar({ onResults, placeholder = "Search tasks..." }
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SearchTask[]>([]);
+  const [selectedTask, setSelectedTask] = useState<todo | null>(null);
 
   // Simple debounce
   const debouncedQuery = useDebounce(query, 300);
@@ -50,16 +53,47 @@ export default function SearchBar({ onResults, placeholder = "Search tasks..." }
       )}
 
       {results.length > 0 && query && (
-        <div className="absolute mt-2 w-full max-h-72 overflow-auto z-20 bg-white dark:bg-[#101010] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-          {results.map((t) => (
-            <div key={t.$id} className="p-3 border-b last:border-0 border-gray-100 dark:border-gray-800">
-              <div className="text-sm font-medium">{t.title}</div>
-              {t.description && (
-                <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{t.description}</div>
-              )}
-            </div>
-          ))}
+        <div className="absolute top-[90%] left-0 mt-2 px-2 pb-2 w-full max-h-72 overflow-auto z-20 bg-white dark:bg-[#101010] border border-gray-200 dark:border-gray-500/[0.2] rounded-lg shadow-lg">
+          <p className="p-2">Tasks:</p>
+          <div className="p-2 rounded-lg bg-gray-100 dark:bg-dark">
+            {results.filter(t => t._index === "tasks").map((t) => (
+              <button
+                key={t.$id}
+                onClick={() => {
+                  // Map SearchTask to todo shape for the details modal
+                  const mapped: todo = {
+                    $id: t.$id,
+                    title: t.title,
+                    description: t.description || "",
+                    comments: '0',
+                    category: t.category || '',
+                    userId: '',
+                    userEmail: t.userEmail || '',
+                    status: t.status || 'pending',
+                    priority: t.priority as any,
+                    dueDate: t.dueDate,
+                    $createdAt: t.$createdAt || new Date().toISOString()
+                  };
+                  setSelectedTask(mapped);
+                }}
+                className="w-full text-left p-2 border-b last:border-0 border-gray-300 dark:border-gray-800 hover:bg-white/50 rounded"
+              >
+                <div className="text-sm font-medium mb-2">{t.title}</div>
+                {t.description && (
+                  <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{t.description}</div>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
+      )}
+
+      {selectedTask && (
+        <TaskDetailsModal
+          isOpen={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          task={selectedTask}
+        />
       )}
     </div>
   );

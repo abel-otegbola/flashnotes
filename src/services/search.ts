@@ -7,6 +7,7 @@ export type SearchTask = {
   status?: 'pending' | 'upcoming' | 'in progress' | 'completed' | 'suspended';
   priority?: 'low' | 'medium' | 'high';
   dueDate?: string;
+  _index: string;
   userEmail: string;
   $createdAt?: string;
   $updatedAt?: string;

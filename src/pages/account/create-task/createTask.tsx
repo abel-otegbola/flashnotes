@@ -7,6 +7,7 @@ import VoiceInput from "../../../components/voiceInput/voiceInput";
 import { useState } from "react";
 import { convertTextToTasks } from "../../../services/gemini";
 import { todo } from "../../../interface/todo";
+import { useOrganizations } from '../../../context/organizationContext';
 import { useTasks } from "../../../context/tasksContext";
 import { useUser } from "../../../context/authContext";
 
@@ -17,6 +18,7 @@ function CreateTask() {
   const [error, setError] = useState<string | null>(null)
   const { addMultipleTasks, loading: savingTasks } = useTasks()
   const { user } = useUser();
+  const { currentOrg } = useOrganizations();
 
   const handleTranscript = (text: string) => {
     // Append the transcribed text to existing text
@@ -63,6 +65,7 @@ function CreateTask() {
       priority: task.priority,
       dueDate: task.dueDate,
       comments: task.comments || '0'
+      ,organizationId: currentOrg?.$id || undefined
     }));
 
     const savedTasks = await addMultipleTasks(tasksToSave);

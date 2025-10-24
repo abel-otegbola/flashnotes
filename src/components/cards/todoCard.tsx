@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChatLine, MenuDots, Pen, TrashBinMinimalistic } from "@solar-icons/react";
 import { todo } from "../../interface/todo";
 import TaskDetailsModal from "../modals/taskDetailsModal";
+import { useOrganizations } from '../../context/organizationContext';
 
 function TodoCard(task: todo) {
   const { title, description, comments, category, status } = task;
@@ -111,6 +112,25 @@ function TodoCard(task: todo) {
 
           <h2 className="font-semibold text-[12px]">{title}</h2>
           <p className="text-[10px] text-gray-400 line-clamp-2">{description}</p>
+          {/* Organization / Team display */}
+          <div className="mt-2 flex gap-2 items-center">
+            {/* find org/team names */}
+            {(() => {
+              try {
+                const org = (useOrganizations().organizations || []).find(o => o.$id === (task as any).organizationId);
+                if (org) {
+                  const team = (org.teams || []).find((t: any) => t.$id === (task as any).teamId);
+                  return (
+                    <>
+                      <span className="text-[11px] px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700">{org.name}</span>
+                      {team && <span className="text-[11px] px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700">{team.name}</span>}
+                    </>
+                  )
+                }
+                return null;
+              } catch { return null }
+            })()}
+          </div>
         </div>
 
         <div className="flex justify-between gap-4 flex-wrap p-2 px-4 border-t border-gray-100 dark:border-gray-500/[0.2]">

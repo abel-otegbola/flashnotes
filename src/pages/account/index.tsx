@@ -9,6 +9,7 @@ import { Formik } from "formik";
 import Button from "../../components/button/button";
 import LogoIcon from "../../assets/icons/logo";
 import Tasks from "./tasks/page";
+import Organizations from "./organizations";
 import SearchBar from "../../components/search/searchBar";
 import CreateTask from "./create-task/createTask";
 
@@ -20,7 +21,7 @@ function AccountPages() {
         return <Navigate to="/auth/login" replace />;
     }
   return (
-    <div className="min-h-[400px] flex justify-between bg-bg-gray-100 dark:bg-dark">
+    <div className="min-h-[400px] flex justify-between bg-bg-gray-100 dark:bg-dark/[0.6]">
         <Sidebar />
         <div className="flex flex-col flex-1 gap-4 md:mt-4 md:mr-4 md:ml-0 ml-0">
             <div className="flex p-4 sm:pr-4 pr-18 md:rounded-[10px] items-center justify-between bg-white dark:bg-dark-bg border border-gray-500/[0.1]">
@@ -55,6 +56,7 @@ function AccountPages() {
                 <Route path="/" element={<Navigate to={"/account/dashboard"} />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />} />
+                <Route path="/organizations" element={<Organizations />} />
                 <Route path="/tasks/new" element={<CreateTask />} />
             </Routes>
         </div>
