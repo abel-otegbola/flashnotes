@@ -58,10 +58,10 @@ function Topbar() {
     return (
         <>
         <div className={`flex justify-between items-center w-full md:px-9 p-4 z-[3] sticky top-0 bg-white dark:bg-dark backdrop-blur-sm transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}>
-            <div className="sm:w-[13%] text-start flex gap-2 items-center">
+            <Link to={"/"} className="sm:w-[13%] text-start flex gap-2 items-center">
                 <LogoIcon className="shadow-lg rounded-[10px]" />
                 <h3 className="text-[16px] font-bold bg-gradient-to-r bg-clip-text text-transparent from-primary to-fuchsia-400">Flashtasks</h3>
-            </div>
+            </Link>
             
             <ul className={`
                 flex sm:flex-row flex-col md:px-0 md:py-0 py-12 px-6 md:sticky fixed top-0 right-0 z-20 md:bg-none dark:bg-dark sm:w-auto h-full w-[75%] 

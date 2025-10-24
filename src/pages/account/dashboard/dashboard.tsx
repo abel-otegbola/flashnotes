@@ -23,9 +23,9 @@ function Dashboard() {
   }, [user]);
 
   return (
-    <div className="flex gap-4 mb-4">
+    <div className="flex sm:flex-row flex-col gap-4 mb-4">
     <div className="flex flex-1 flex-col gap-6 bg-white dark:bg-dark-bg border border-gray-500/[0.1] md:rounded-[10px] px-6 py-4 h-full mb-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="font-semibold text-2xl">Welcome back, {user.name}</h1>
           <p className="text-sm text-gray-500">Here's a quick overview of your tasks</p>
@@ -79,7 +79,7 @@ function Dashboard() {
       </div>
     </div>
 
-      <div className="p-4 sm:w-[320px] border border-primary/[0.12] bg-white dark:bg-dark-bg rounded-[10px]">
+      <div className="p-4 sm:w-[320px] w-full border border-primary/[0.12] bg-white dark:bg-dark-bg rounded-[10px]">
         <div className="flex py-2 justify-between items-center gap-2">
             <p className="font-semibold 2xl:text-[20px] text-[16px]">Calendar</p>
             <div className="p-[6px] rounded-[5px] bg-[#A2A1A81A] hover:bg-gray-500/[0.06]">
