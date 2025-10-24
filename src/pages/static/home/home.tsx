@@ -135,22 +135,22 @@ function Home() {
             </BlurReveal>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-2">
             {[
               {
-                step: "01",
+                step: "step-1-light",
                 title: "Record or Speak",
                 description: "Upload meeting recordings or use voice input to capture your thoughts, discussions, and ideas naturally.",
                 image: "placeholder"
               },
               {
-                step: "02",
+                step: "step-2-light",
                 title: "AI Processes Everything",
                 description: "Google Gemini analyzes the content, identifies action items, extracts key insights, and structures everything intelligently.",
                 image: "placeholder"
               },
               {
-                step: "03",
+                step: "step-3-light",
                 title: "Get Actionable Tasks",
                 description: "Receive organized tasks with priorities, deadlines, and recommendations. Search, track, and optimize your workflow instantly.",
                 image: "placeholder"
@@ -158,12 +158,7 @@ function Home() {
             ].map((step, index) => (
               <BlurReveal key={index} preset="zoom">
                 <div className="flex flex-col gap-6">
-                  <div className="text-primary font-bold text-[48px] opacity-20">{step.step}</div>
-                  <div className="w-full h-[200px] rounded-xl flex items-center justify-center border border-primary/30">
-                    <span className="text-gray-400 text-[14px]">Visual: {step.title}</span>
-                  </div>
-                  <h3 className="text-[24px] font-bold">{step.title}</h3>
-                  <p className="text-gray dark:text-gray-300">{step.description}</p>
+                  <img src={`/${step.step}.png`} alt={step.title} className="w-full" />
                 </div>
               </BlurReveal>
             ))}

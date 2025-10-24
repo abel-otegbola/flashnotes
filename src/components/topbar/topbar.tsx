@@ -17,7 +17,7 @@ function Topbar() {
         if (user && (user as any).name) {
         const initial = ((user as any).name || (user as any).email || 'U')[0].toUpperCase();
         return (
-            <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">{initial}</div>
+            <Link to={"/account/dashboard"} className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">{initial}</Link>
         );
         }
 
