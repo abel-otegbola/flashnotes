@@ -20,7 +20,7 @@ export default function OrganizationsPage() {
 
   return (
     <div className="">
-      <div className="flex items-center justify-between mb-6 bg-white dark:bg-dark-bg p-4 rounded-lg border border-gray-500/[0.1] dark:border-gray-500/[0.2]">
+      <div className="flex items-center justify-between mb-4 bg-white dark:bg-dark-bg p-4 rounded-lg border border-gray-500/[0.1] dark:border-gray-500/[0.2]">
         <h1 className="text-2xl font-semibold">Organizations</h1>
         <Button onClick={() => setShowCreate(true)} size="medium">Create Organization</Button>
       </div>
@@ -50,7 +50,7 @@ export default function OrganizationsPage() {
           {!currentOrg ? (
             <div className="text-gray-500">Select an organization to manage teams and members.</div>
           ) : (
-            <div className="p-4 rounded-lg border border-border-gray-100">
+            <div className="p-4 rounded-lg border border-border-gray-100 dark:border-gray-500/[0.2]">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-semibold">{currentOrg.name}</h2>
@@ -66,10 +66,10 @@ export default function OrganizationsPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   {(currentOrg.teams || []).map(team => (
-                    <div key={team.$id} className="flex items-center justify-between p-2 border rounded">
+                    <div key={team.$id} className="flex items-center justify-between p-2 border border-gray-500/[0.2] rounded">
                       <div>{team.name}</div>
                       <div className="flex gap-2">
-                        <Button variant="secondary" onClick={() => removeTeam(currentOrg.$id, team.$id)}>Remove</Button>
+                        <Button variant="secondary" size='small' onClick={() => removeTeam(currentOrg.$id, team.$id)}>Remove</Button>
                       </div>
                     </div>
                   ))}
@@ -80,7 +80,7 @@ export default function OrganizationsPage() {
                 <h4 className="text-sm font-medium mb-2">Members</h4>
                 <div className="flex flex-col gap-2">
                   {(currentOrg.members || []).map(m => (
-                    <div key={m.$id} className="flex items-center justify-between p-2 border rounded">
+                    <div key={m.$id} className="flex items-center justify-between p-2 border border-gray-500/[0.2] rounded">
                       <div>
                         <div className="font-medium">{m.name || m.email}</div>
                         <div className="text-xs text-gray-500">{m.role}</div>

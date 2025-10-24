@@ -6,7 +6,7 @@ const getBackend = () => import.meta.env.VITE_BACKEND_URL || '';
 export async function indexTask(action: IndexAction, payload: any) {
   try {
     const backend = getBackend();
-    await fetch(`${backend}/api/index/task`, {
+    await fetch(`${backend}api/index/task`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(action === 'delete' ? { action, id: payload } : { action, document: payload })
@@ -20,7 +20,7 @@ export async function indexTask(action: IndexAction, payload: any) {
 export async function indexOrganization(action: IndexAction, payload: any) {
   try {
     const backend = getBackend();
-    await fetch(`${backend}/api/index/organizations`, {
+    await fetch(`${backend}api/index/organization`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(action === 'delete' ? { action, id: payload } : { action, document: payload })
